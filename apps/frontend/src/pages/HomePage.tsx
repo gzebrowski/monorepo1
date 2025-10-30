@@ -1,6 +1,16 @@
-import React from 'react'
+import React, { useState } from 'react'
+import type { PostWithRelations } from '@simpleblog/shared'
+import { PostList } from '../components/posts/PostList'
+import { CategorySelector } from '../components/categories/CategorySelector'
 
 export const HomePage: React.FC = () => {
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | undefined>()
+
+  const handlePostClick = (post: PostWithRelations) => {
+    console.log('Clicked post:', post.title)
+    // Można tutaj dodać nawigację do szczegółów posta
+  }
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Hero Section */}
@@ -14,73 +24,33 @@ export const HomePage: React.FC = () => {
         </p>
       </div>
 
-      {/* Featured Posts */}
+      {/* Demo Section - Shared Library Usage */}
       <section className="mb-16">
-        <h2 className="text-3xl font-bold text-gray-900 mb-8">Najnowsze artykuły</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {/* Mock posts */}
-          {[1, 2, 3, 4, 5, 6].map((id) => (
-            <article key={id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="h-48 bg-gradient-to-r from-primary-400 to-primary-600"></div>
-              <div className="p-6">
-                <div className="flex items-center mb-3">
-                  <span className="bg-primary-100 text-primary-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                    Technologia
-                  </span>
-                  <span className="text-gray-500 text-sm ml-3">
-                    2 dni temu
-                  </span>
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                  Przykładowy tytuł artykułu {id}
-                </h3>
-                <p className="text-gray-600 mb-4">
-                  To jest przykładowy opis artykułu, który powinien być krótki i zachęcać do przeczytania całości...
-                </p>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <div className="w-8 h-8 bg-gray-300 rounded-full mr-2"></div>
-                    <span className="text-sm text-gray-700">Jan Kowalski</span>
-                  </div>
-                  <button className="text-primary-600 hover:text-primary-800 text-sm font-medium">
-                    Czytaj więcej →
-                  </button>
-                </div>
-              </div>
-            </article>
-          ))}
+        <div className="bg-blue-50 rounded-lg p-6 mb-8">
+          <h3 className="text-lg font-semibold text-blue-900 mb-2">
+            🔗 Przykład użycia Shared Library
+          </h3>
+          <p className="text-blue-700">
+            Ta aplikacja demonstruje jak używać shared library w monorepo. Backend i frontend 
+            dzielą wspólne typy, schemat walidacji Zod i definicje API.
+          </p>
         </div>
-      </section>
 
-      {/* Categories */}
-      <section className="mb-16">
-        <h2 className="text-3xl font-bold text-gray-900 mb-8">Kategorie</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer">
-            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-              <span className="text-blue-600 text-xl">💻</span>
-            </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Technologia</h3>
-            <p className="text-gray-600 mb-4">Najnowsze trendy w świecie IT i programowania</p>
-            <span className="text-primary-600 text-sm font-medium">15 artykułów →</span>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Categories using shared types */}
+          <div className="lg:col-span-1">
+            <CategorySelector 
+              selectedCategoryId={selectedCategoryId}
+              onCategorySelect={setSelectedCategoryId}
+            />
           </div>
-          
-          <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer">
-            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-              <span className="text-green-600 text-xl">🌱</span>
-            </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Styl życia</h3>
-            <p className="text-gray-600 mb-4">Rozwój osobisty, zdrowie i dobre nawyki</p>
-            <span className="text-primary-600 text-sm font-medium">12 artykułów →</span>
-          </div>
-          
-          <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer">
-            <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mb-4">
-              <span className="text-yellow-600 text-xl">✈️</span>
-            </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Podróże</h3>
-            <p className="text-gray-600 mb-4">Przewodniki i relacje z najciekawszych miejsc</p>
-            <span className="text-primary-600 text-sm font-medium">8 artykułów →</span>
+
+          {/* Posts using shared types */}
+          <div className="lg:col-span-2">
+            <PostList
+              categoryId={selectedCategoryId}
+              onPostClick={handlePostClick}
+            />
           </div>
         </div>
       </section>

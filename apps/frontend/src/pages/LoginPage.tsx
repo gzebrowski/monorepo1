@@ -1,53 +1,94 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
+import { LoginForm } from '../components/auth/LoginForm'
+import { RegisterForm } from '../components/auth/RegisterForm'
 
 export const LoginPage: React.FC = () => {
+  const navigate = useNavigate()
+
+  const handleSuccess = () => {
+    navigate('/dashboard')
+  }
+
+  const handleError = (error: string) => {
+    console.error('Login error:', error)
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Zaloguj się do swojego konta
+      <div className="max-w-md w-full">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-extrabold text-gray-900">
+            Przykład użycia Shared Library
           </h2>
+          <p className="mt-2 text-gray-600">
+            Logowanie z walidacją Zod i wspólnymi typami
+          </p>
         </div>
-        <form className="mt-8 space-y-6">
-          <div>
-            <label htmlFor="email" className="sr-only">Email</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              required
-              className="relative block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-              placeholder="Adres email"
-            />
-          </div>
-          <div>
-            <label htmlFor="password" className="sr-only">Hasło</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              className="relative block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-              placeholder="Hasło"
-            />
-          </div>
-          <div>
-            <button
-              type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+        
+        <LoginForm 
+          onSuccess={handleSuccess}
+          onError={handleError}
+        />
+        
+        <div className="mt-4 text-center">
+          <p className="text-sm text-gray-600">
+            Nie masz konta?{' '}
+            <button 
+              onClick={() => navigate('/register')}
+              className="text-blue-600 hover:text-blue-500"
             >
-              Zaloguj się
+              Zarejestruj się
             </button>
-          </div>
-        </form>
+          </p>
+        </div>
       </div>
     </div>
   )
 }
 
 export const RegisterPage: React.FC = () => {
-  return <div>Register Page - To be implemented</div>
+  const navigate = useNavigate()
+
+  const handleSuccess = () => {
+    navigate('/login')
+  }
+
+  const handleError = (error: string) => {
+    console.error('Register error:', error)
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-extrabold text-gray-900">
+            Rejestracja
+          </h2>
+          <p className="mt-2 text-gray-600">
+            Przykład walidacji z shared library
+          </p>
+        </div>
+        
+        <RegisterForm 
+          onSuccess={handleSuccess}
+          onError={handleError}
+        />
+        
+        <div className="mt-4 text-center">
+          <p className="text-sm text-gray-600">
+            Masz już konto?{' '}
+            <button 
+              onClick={() => navigate('/login')}
+              className="text-blue-600 hover:text-blue-500"
+            >
+              Zaloguj się
+            </button>
+          </p>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export const PostPage: React.FC = () => {

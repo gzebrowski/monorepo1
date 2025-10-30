@@ -1,7 +1,12 @@
 import { IsEmail, IsString, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { 
+  LoginRequest, 
+  RegisterRequest, 
+  ChangePasswordRequest 
+} from '@simpleblog/shared';
 
-export class LoginDto {
+export class LoginDto implements LoginRequest {
   @ApiProperty({ example: 'user@example.com' })
   @IsEmail()
   email: string;
@@ -11,7 +16,7 @@ export class LoginDto {
   password: string;
 }
 
-export class RegisterDto {
+export class RegisterDto implements RegisterRequest {
   @ApiProperty({ example: 'user@example.com' })
   @IsEmail()
   email: string;
@@ -34,7 +39,7 @@ export class RegisterDto {
   lastName: string;
 }
 
-export class ChangePasswordDto {
+export class ChangePasswordDto implements ChangePasswordRequest {
   @ApiProperty({ example: 'currentPassword123' })
   @IsString()
   currentPassword: string;

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { Layout } from './components/Layout'
-import { HomePage } from './pages/HomePage'
+import { SimpleHomePage } from './pages/SimpleHomePage'
 import { LoginPage, RegisterPage, PostPage, CategoryPage, DashboardPage } from './pages/LoginPage'
 import { AuthProvider } from './contexts/AuthContext'
 import './App.css'
@@ -11,7 +11,7 @@ function App() {
     <AuthProvider>
       <Layout>
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<SimpleHomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/post/:slug" element={<PostPage />} />
