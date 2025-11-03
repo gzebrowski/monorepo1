@@ -177,3 +177,106 @@ export interface UserFilters {
   isActive?: boolean;
   search?: string;
 }
+
+// Poll types
+export interface Poll extends BaseEntity {
+  title: string;
+  description?: string;
+  isActive: boolean;
+  startDate?: Date;
+  endDate?: Date;
+  authorId: number;
+}
+
+export interface PollWithDetails extends Poll {
+  author: Pick<User, 'id' | 'username' | 'firstName' | 'lastName'>;
+  questions: PollQuestionWithOptions[];
+  _count: {
+    responses: number;
+  };
+}
+
+export interface PollQuestion extends BaseEntity {
+  question: string;
+  questionType: 'single' | 'multiple' | 'text';
+  isRequired: boolean;
+  order: number;
+  pollId: number;
+}
+
+export interface PollQuestionWithOptions extends PollQuestion {
+  options: PollOption[];
+}
+
+export interface PollOption extends BaseEntity {
+  text: string;
+  order: number;
+  questionId: number;
+}
+
+export interface PollResponse extends BaseEntity {
+  pollId: number;
+  userId: number;
+  submittedAt: Date;
+}
+
+export interface PollResponseWithAnswers extends PollResponse {
+  user: Pick<User, 'id' | 'username'>;
+  answers: PollAnswer[];
+}
+
+export interface PollAnswer extends BaseEntity {
+  questionId: number;
+  optionId?: number; // null for text answers
+  textAnswer?: string; // null for option answers
+  responseId: number;
+}
+
+// Poll Request types
+export interface CreatePollRequest {
+  title: string;
+  description?: string;
+  isActive?: boolean;
+  startDate?: Date;
+  endDate?: Date;
+  questions: CreatePollQuestionRequest[];
+}
+
+export interface CreatePollQuestionRequest {
+  question: string;
+  questionType: 'single' | 'multiple' | 'text';
+  isRequired: boolean;
+  order: number;
+  options?: CreatePollOptionRequest[];
+}
+
+export interface CreatePollOptionRequest {
+  text: string;
+  order: number;
+}
+
+export interface UpdatePollRequest {
+  title?: string;
+  description?: string;
+  isActive?: boolean;
+  startDate?: Date;
+  endDate?: Date;
+}
+
+export interface SubmitPollResponseRequest {
+  pollId: number;
+  answers: SubmitPollAnswerRequest[];
+}
+
+export interface SubmitPollAnswerRequest {
+  questionId: number;
+  optionId?: number;
+  textAnswer?: string;
+}
+
+// Poll Filter types
+export interface PollFilters {
+  isActive?: boolean;
+  authorId?: number;
+  search?: string;
+}

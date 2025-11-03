@@ -95,3 +95,45 @@ export type PaginationInput = z.infer<typeof paginationSchema>;
 export type PostFiltersInput = z.infer<typeof postFiltersSchema>;
 export type CategoryFiltersInput = z.infer<typeof categoryFiltersSchema>;
 export type UserFiltersInput = z.infer<typeof userFiltersSchema>;
+
+// Poll validation schemas
+export const createPollSchema = z.object({
+  title: z.string().min(1, 'Title is required').max(200, 'Title too long'),
+  description: z.string().max(1000, 'Description too long').optional(),
+  isActive: z.boolean().optional(),
+  startDate: z.date().optional(),
+  endDate: z.date().optional(),
+  questions: z.array(z.object({
+    question: z.string().min(1, 'Question is required').max(500, 'Question too long'),
+    questionType: z.enum(['single', 'multiple', 'text']),
+    isRequired: z.boolean(),
+    order: z.number().min(0),
+    options: z.array(z.object({
+      text: z.string().min(1, 'Option text is required').max(200, 'Option text too long'),
+      order: z.number().min(0),
+    })).optional(),
+  })).min(1, 'At least one question is required'),
+});
+
+export const updatePollSchema = createPollSchema.partial().omit({ questions: true });
+
+export const submitPollResponseSchema = z.object({
+  pollId: z.number().positive('Valid poll ID is required'),
+  answers: z.array(z.object({
+    questionId: z.number().positive('Valid question ID is required'),
+    optionId: z.number().positive().optional(),
+    textAnswer: z.string().max(1000, 'Text answer too long').optional(),
+  })).min(1, 'At least one answer is required'),
+});
+
+export const pollFiltersSchema = z.object({
+  isActive: z.boolean().optional(),
+  authorId: z.number().positive().optional(),
+  search: z.string().optional(),
+});
+
+// Export types from poll schemas
+export type CreatePollInput = z.infer<typeof createPollSchema>;
+export type UpdatePollInput = z.infer<typeof updatePollSchema>;
+export type SubmitPollResponseInput = z.infer<typeof submitPollResponseSchema>;
+export type PollFiltersInput = z.infer<typeof pollFiltersSchema>;

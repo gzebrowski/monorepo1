@@ -21,6 +21,14 @@ import type {
   PostFilters,
   CategoryFilters,
   UserFilters,
+  Poll,
+  PollWithDetails,
+  CreatePollRequest,
+  UpdatePollRequest,
+  SubmitPollResponseRequest,
+  PollResponse,
+  PollResponseWithAnswers,
+  PollFilters,
 } from '../types';
 
 // Base API configuration
@@ -79,12 +87,25 @@ export interface CategoriesApi {
   delete(id: number): Promise<ApiResponse<null>>;
 }
 
+// Polls API
+export interface PollsApi {
+  getAll(filters?: PollFilters): Promise<PollWithDetails[]>;
+  getById(id: number): Promise<PollWithDetails>;
+  create(data: CreatePollRequest): Promise<Poll>;
+  update(id: number, data: UpdatePollRequest): Promise<Poll>;
+  delete(id: number): Promise<ApiResponse<null>>;
+  submit(data: SubmitPollResponseRequest): Promise<PollResponse>;
+  getResponses(pollId: number): Promise<PollResponseWithAnswers[]>;
+  getResults(pollId: number): Promise<any>; // Poll results/statistics
+}
+
 // Complete API interface
 export interface SimpleBlogApi {
   auth: AuthApi;
   users: UsersApi;
   posts: PostsApi;
   categories: CategoriesApi;
+  polls: PollsApi;
 }
 
 // API Response utilities
