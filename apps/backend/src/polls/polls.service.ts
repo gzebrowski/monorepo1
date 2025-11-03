@@ -35,7 +35,7 @@ export class PollsService {
         author: {
           select: {
             id: true,
-            username: true,
+            
             firstName: true,
             lastName: true,
           },
@@ -65,7 +65,7 @@ export class PollsService {
         author: {
           select: {
             id: true,
-            username: true,
+            
             firstName: true,
             lastName: true,
           },
@@ -247,7 +247,7 @@ export class PollsService {
         user: {
           select: {
             id: true,
-            username: true,
+            
           },
         },
         answers: {

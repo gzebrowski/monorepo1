@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema, type RegisterRequest } from '@simpleblog/shared';
-import { apiClient } from '../../api/client';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { useAuth } from '../contexts/AuthContext';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../../components/ui/card';
 
 interface RegisterFormProps {
   onSuccess?: () => void;
@@ -14,6 +14,7 @@ interface RegisterFormProps {
 
 export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess, onError }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const { register: registerUser } = useAuth();
 
   const {
     register,
@@ -26,15 +27,9 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess, onError }
   const onSubmit = async (data: RegisterRequest) => {
     setIsLoading(true);
     try {
-      const response = await apiClient.register(data);
-      
-      if (response.success) {
-        console.log('Registration successful:', response.data);
-        onSuccess?.();
-      } else {
-        console.error('Registration failed:', response.error);
-        onError?.(response.error);
-      }
+      await registerUser(data);
+      console.log('Registration successful');
+      onSuccess?.();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Nieznany błąd';
       console.error('Registration error:', errorMessage);
@@ -87,22 +82,6 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess, onError }
                 <p className="text-red-500 text-sm">{errors.lastName.message}</p>
               )}
             </div>
-          </div>
-
-          <div className="space-y-2">
-            <label htmlFor="username" className="text-sm font-medium">
-              Nazwa użytkownika
-            </label>
-            <Input
-              id="username"
-              type="text"
-              placeholder="jankowalski"
-              {...register('username')}
-              className={errors.username ? 'border-red-500' : ''}
-            />
-            {errors.username && (
-              <p className="text-red-500 text-sm">{errors.username.message}</p>
-            )}
           </div>
 
           <div className="space-y-2">

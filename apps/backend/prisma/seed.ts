@@ -47,7 +47,6 @@ async function main() {
     update: {},
     create: {
       email: 'admin@simpleblog.com',
-      username: 'admin',
       password: hashedPassword,
       firstName: 'Admin',
       lastName: 'User',

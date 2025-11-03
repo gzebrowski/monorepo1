@@ -8,7 +8,6 @@ export interface BaseEntity {
 // User types
 export interface User extends BaseEntity {
   email: string;
-  username: string;
   firstName?: string;
   lastName?: string;
   avatar?: string;
@@ -21,7 +20,6 @@ export interface UserWithPosts extends User {
 
 export interface CreateUserRequest {
   email: string;
-  username: string;
   password: string;
   firstName?: string;
   lastName?: string;
@@ -30,12 +28,9 @@ export interface CreateUserRequest {
 
 export interface UpdateUserRequest {
   email?: string;
-  username?: string;
-  password?: string;
   firstName?: string;
   lastName?: string;
   avatar?: string;
-  isActive?: boolean;
 }
 
 // Category types
@@ -81,7 +76,7 @@ export interface Post extends BaseEntity {
 }
 
 export interface PostWithRelations extends Post {
-  author: Pick<User, 'id' | 'username' | 'firstName' | 'lastName'>;
+  author: Pick<User, 'id' | 'firstName' | 'lastName'>;
   category: Category;
 }
 
@@ -115,7 +110,6 @@ export interface LoginRequest {
 
 export interface RegisterRequest {
   email: string;
-  username: string;
   password: string;
   firstName: string;
   lastName: string;
@@ -189,7 +183,7 @@ export interface Poll extends BaseEntity {
 }
 
 export interface PollWithDetails extends Poll {
-  author: Pick<User, 'id' | 'username' | 'firstName' | 'lastName'>;
+  author: Pick<User, 'id' | 'firstName' | 'lastName'>;
   questions: PollQuestionWithOptions[];
   _count: {
     responses: number;
@@ -221,7 +215,7 @@ export interface PollResponse extends BaseEntity {
 }
 
 export interface PollResponseWithAnswers extends PollResponse {
-  user: Pick<User, 'id' | 'username'>;
+  user: Pick<User, 'id' | 'firstName' | 'lastName'>;
   answers: PollAnswer[];
 }
 

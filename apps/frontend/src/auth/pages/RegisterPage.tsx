@@ -1,16 +1,16 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { LoginForm } from '../components/LoginForm'
+import { RegisterForm } from '../components/RegisterForm'
 
-export const LoginPage: React.FC = () => {
+export const RegisterPage: React.FC = () => {
   const navigate = useNavigate()
 
   const handleSuccess = () => {
-    navigate('/dashboard')
+    navigate('/auth/login')
   }
 
   const handleError = (error: string) => {
-    console.error('Login error:', error)
+    console.error('Register error:', error)
   }
 
   return (
@@ -18,26 +18,26 @@ export const LoginPage: React.FC = () => {
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-extrabold text-gray-900">
-            Logowanie
+            Rejestracja
           </h2>
           <p className="mt-2 text-gray-600">
-            Zaloguj się do swojego konta
+            Utwórz nowe konto
           </p>
         </div>
         
-        <LoginForm 
+        <RegisterForm 
           onSuccess={handleSuccess}
           onError={handleError}
         />
         
         <div className="mt-4 text-center">
           <p className="text-sm text-gray-600">
-            Nie masz konta?{' '}
+            Masz już konto?{' '}
             <button 
-              onClick={() => navigate('/auth/register')}
+              onClick={() => navigate('/auth/login')}
               className="text-blue-600 hover:text-blue-500"
             >
-              Zarejestruj się
+              Zaloguj się
             </button>
           </p>
         </div>

@@ -26,7 +26,6 @@ export class UsersService {
       select: {
         id: true,
         email: true,
-        username: true,
         firstName: true,
         lastName: true,
         avatar: true,
@@ -48,7 +47,6 @@ export class UsersService {
       select: {
         id: true,
         email: true,
-        username: true,
         firstName: true,
         lastName: true,
         avatar: true,
@@ -87,11 +85,7 @@ export class UsersService {
     });
   }
 
-  async findByUsername(username: string) {
-    return this.prisma.user.findUnique({
-      where: { username },
-    });
-  }
+
 
   async update(id: number, updateUserDto: UpdateUserDto) {
     const updateData = { ...updateUserDto };
@@ -115,5 +109,25 @@ export class UsersService {
     });
     
     return { message: 'User deleted successfully' };
+  }
+
+  async updateTokenHash(id: number, tokenHash: string) {
+    return this.prisma.user.update({
+      where: { id },
+      data: { tokenHash },
+    });
+  }
+
+  async findByTokenHash(tokenHash: string) {
+    return this.prisma.user.findFirst({
+      where: { tokenHash },
+    });
+  }
+
+  async clearTokenHash(id: number) {
+    return this.prisma.user.update({
+      where: { id },
+      data: { tokenHash: null },
+    });
   }
 }

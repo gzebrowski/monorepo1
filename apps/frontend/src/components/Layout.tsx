@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/auth/contexts/AuthContext'
 
 interface LayoutProps {
@@ -7,7 +7,18 @@ interface LayoutProps {
 }
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
+  
+  const doLogout = async () => {
+    try {
+      await logout();
+      // Redirect to home page using react-router
+      navigate('/', { replace: true });
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -41,16 +52,29 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
               </Link>
             </nav>
 
+            { isAuthenticated && (
+                <div className="flex items-center space-x-4">
+                <button 
+                    onClick={doLogout}
+                    className="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                >
+                    Wyloguj się
+                </button>
+                <Link to="/dashboard" className="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                    Panel użytkownika
+                </Link>
+                </div>
+            ) }
             { !isAuthenticated && (
                 <div className="flex items-center space-x-4">
                 <Link 
-                    to="/login"
+                    to="/auth/login"
                     className="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
                 >
                     Zaloguj się
                 </Link>
                 <Link 
-                    to="/register"
+                    to="/auth/register"
                     className="bg-primary-600 text-white hover:bg-primary-700 px-4 py-2 rounded-md text-sm font-medium"
                 >
                     Zarejestruj się

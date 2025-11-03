@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { LoginDto, RegisterDto, ChangePasswordDto } from './dto';
 import * as bcrypt from 'bcryptjs';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class AuthService {
@@ -10,6 +11,14 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
   ) {}
+
+  private hashToken(token: string): string {
+    return crypto.createHash('sha256').update(token).digest('hex');
+  }
+
+  private generateSecureToken(): string {
+    return crypto.randomBytes(32).toString('hex');
+  }
 
   async validateUser(email: string, password: string): Promise<any> {
     const user = await this.usersService.findByEmail(email);
@@ -26,7 +35,20 @@ export class AuthService {
       throw new Error('Invalid credentials');
     }
 
-    const payload = { email: user.email, sub: user.id };
+    // Generate secure token and its hash
+    const secureToken = this.generateSecureToken();
+    const tokenHash = this.hashToken(secureToken);
+    
+    // Store token hash in database
+    await this.usersService.updateTokenHash(user.id, tokenHash);
+
+    // Create JWT payload with secure token
+    const payload = { 
+      email: user.email, 
+      sub: user.id, 
+      token: secureToken 
+    };
+
     return {
       access_token: this.jwtService.sign(payload),
       user,
@@ -40,7 +62,21 @@ export class AuthService {
     }
 
     const user = await this.usersService.create(registerDto);
-    const payload = { email: user.email, sub: user.id };
+    
+    // Generate secure token and its hash for new user
+    const secureToken = this.generateSecureToken();
+    const tokenHash = this.hashToken(secureToken);
+    
+    // Store token hash in database
+    await this.usersService.updateTokenHash(user.id, tokenHash);
+
+    // Create JWT payload with secure token
+    const payload = { 
+      email: user.email, 
+      sub: user.id, 
+      token: secureToken 
+    };
+
     return {
       access_token: this.jwtService.sign(payload),
       user,
@@ -67,5 +103,30 @@ export class AuthService {
     });
 
     return { message: 'Password changed successfully' };
+  }
+
+  async logout(userId: number) {
+    // Clear the token hash from database to invalidate all existing tokens
+    await this.usersService.clearTokenHash(userId);
+    return { message: 'Logged out successfully' };
+  }
+
+  async validateToken(payload: any): Promise<any> {
+    if (!payload.token) {
+      return null;
+    }
+
+    // Hash the token from JWT payload
+    const tokenHash = this.hashToken(payload.token);
+    
+    // Find user with matching token hash
+    const user = await this.usersService.findByTokenHash(tokenHash);
+    
+    if (!user || user.id !== payload.sub) {
+      return null;
+    }
+
+    const { password, tokenHash: _, ...result } = user;
+    return result;
   }
 }

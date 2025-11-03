@@ -50,4 +50,22 @@ export class AuthController {
   ) {
     return this.authService.changePassword(req.user.id, changePasswordDto);
   }
+
+  @Post('logout')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Logout user' })
+  @ApiResponse({ status: 200, description: 'User logged out successfully' })
+  async logout(@Request() req) {
+    return this.authService.logout(req.user.id);
+  }
+
+  @Post('me')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get current user profile' })
+  @ApiResponse({ status: 200, description: 'User profile retrieved successfully' })
+  async getProfile(@Request() req) {
+    return { user: req.user };
+  }
 }

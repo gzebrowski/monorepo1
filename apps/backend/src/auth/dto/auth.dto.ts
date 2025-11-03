@@ -21,10 +21,6 @@ export class RegisterDto implements RegisterRequest {
   @IsEmail()
   email: string;
 
-  @ApiProperty({ example: 'johndoe' })
-  @IsString()
-  username: string;
-
   @ApiProperty({ example: 'password123', minLength: 6 })
   @IsString()
   @MinLength(6)

@@ -3,7 +3,6 @@ import { z } from 'zod';
 // User validation schemas
 export const createUserSchema = z.object({
   email: z.string().email('Invalid email format'),
-  username: z.string().min(3, 'Username must be at least 3 characters').max(20, 'Username too long'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
   firstName: z.string().optional(),
   lastName: z.string().optional(),
@@ -19,7 +18,6 @@ export const loginSchema = z.object({
 
 export const registerSchema = z.object({
   email: z.string().email('Invalid email format'),
-  username: z.string().min(3, 'Username must be at least 3 characters').max(20, 'Username too long'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),

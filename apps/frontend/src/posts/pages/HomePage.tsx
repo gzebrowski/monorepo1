@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import type { PostWithRelations } from '@simpleblog/shared'
-import { PostList } from '../components/posts/PostList'
-import { CategorySelector } from '../components/categories/CategorySelector'
+import { PostList } from '../components/PostList'
+import { CategorySelector } from '@/categories/components/CategorySelector'
 
 export const HomePage: React.FC = () => {
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | undefined>()

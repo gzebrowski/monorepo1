@@ -1,17 +1,13 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
-
-interface User {
-  id: number
-  email: string
-  username: string
-  firstName?: string
-  lastName?: string
-}
+import { apiClient } from '../../api/client'
+import type { User, RegisterRequest, ChangePasswordRequest } from '@simpleblog/shared'
 
 interface AuthContextType {
   user: User | null
   login: (email: string, password: string) => Promise<void>
-  logout: () => void
+  register: (data: RegisterRequest) => Promise<void>
+  logout: () => Promise<void>
+  changePassword: (data: ChangePasswordRequest) => Promise<void>
   isAuthenticated: boolean
   loading: boolean
 }
@@ -36,43 +32,87 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     // Check if user is logged in on mount
-    const token = localStorage.getItem('token')
+    const token = localStorage.getItem('authToken')
     if (token) {
       // Validate token and get user info
-      // This would normally make an API call
-      setLoading(false)
+      checkAuthStatus()
     } else {
       setLoading(false)
     }
   }, [])
 
-  const login = async (email: string, password: string) => {
+  const checkAuthStatus = async () => {
     try {
-      // Mock login - replace with actual API call
-      const mockUser: User = {
-        id: 1,
-        email,
-        username: 'user',
-        firstName: 'John',
-        lastName: 'Doe',
+      const response = await apiClient.getProfile()
+      if (response.success) {
+        setUser(response.data)
+      } else {
+        // Token is invalid, clear it
+        apiClient.clearToken()
       }
-      
-      localStorage.setItem('token', 'mock-jwt-token')
-      setUser(mockUser)
     } catch (error) {
-      throw new Error('Login failed')
+      // Token is invalid, clear it
+      apiClient.clearToken()
+    } finally {
+      setLoading(false)
     }
   }
 
-  const logout = () => {
-    localStorage.removeItem('token')
-    setUser(null)
+  const login = async (email: string, password: string) => {
+    try {
+      const response = await apiClient.login({ email, password })
+      if (response.success) {
+        setUser(response.data.user)
+      } else {
+        throw new Error(response.error)
+      }
+    } catch (error) {
+      throw error instanceof Error ? error : new Error('Login failed')
+    }
+  }
+
+  const register = async (data: RegisterRequest) => {
+    try {
+      const response = await apiClient.register(data)
+      if (response.success) {
+        setUser(response.data.user)
+      } else {
+        throw new Error(response.error)
+      }
+    } catch (error) {
+      throw error instanceof Error ? error : new Error('Registration failed')
+    }
+  }
+
+  const logout = async () => {
+    try {
+      // Call logout endpoint to invalidate token on server
+      await apiClient.logout()
+    } catch (error) {
+      // Even if server logout fails, clear local state
+      console.warn('Server logout failed:', error)
+    } finally {
+      setUser(null)
+    }
+  }
+
+  const changePassword = async (data: ChangePasswordRequest) => {
+    try {
+      const response = await apiClient.changePassword(data)
+      if (!response.success) {
+        throw new Error(response.error)
+      }
+    } catch (error) {
+      throw error instanceof Error ? error : new Error('Password change failed')
+    }
   }
 
   const value: AuthContextType = {
     user,
     login,
+    register,
     logout,
+    changePassword,
     isAuthenticated: !!user,
     loading,
   }

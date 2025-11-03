@@ -33,7 +33,7 @@ export class CategoriesService {
             author: {
               select: {
                 id: true,
-                username: true,
+                
                 firstName: true,
                 lastName: true,
               },
@@ -56,7 +56,7 @@ export class CategoriesService {
             author: {
               select: {
                 id: true,
-                username: true,
+                
                 firstName: true,
                 lastName: true,
               },

@@ -264,3 +264,5 @@ simpleblog/
 ## 📝 License
 
 This project is licensed under the MIT License.
+
+Run backend: cd apps/backend && npm run start:dev

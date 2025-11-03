@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, type LoginRequest } from '@simpleblog/shared';
-import { apiClient } from '../../api/client';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { useAuth } from '../contexts/AuthContext';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../../components/ui/card';
 
 interface LoginFormProps {
   onSuccess?: () => void;
@@ -14,6 +14,7 @@ interface LoginFormProps {
 
 export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onError }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const { login } = useAuth();
 
   const {
     register,
@@ -26,15 +27,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onError }) => {
   const onSubmit = async (data: LoginRequest) => {
     setIsLoading(true);
     try {
-      const response = await apiClient.login(data);
-      
-      if (response.success) {
-        console.log('Login successful:', response.data);
-        onSuccess?.();
-      } else {
-        console.error('Login failed:', response.error);
-        onError?.(response.error);
-      }
+      await login(data.email, data.password);
+      console.log('Login successful');
+      onSuccess?.();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Nieznany błąd';
       console.error('Login error:', errorMessage);

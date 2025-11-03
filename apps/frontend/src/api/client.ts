@@ -1,12 +1,10 @@
 import type { 
-  ApiResponse, 
   AuthResponse,
   User,
   Post,
   PostWithRelations,
   Category,
   CategoryWithPosts,
-  PaginatedResponse,
   LoginRequest,
   RegisterRequest,
   CreatePostRequest,
@@ -14,14 +12,12 @@ import type {
   CreateCategoryRequest,
   UpdateCategoryRequest,
   ChangePasswordRequest,
-  CreateUserRequest,
   UpdateUserRequest,
   PostFilters,
   CategoryFilters,
   PaginationQuery
 } from '@simpleblog/shared';
 import {
-  createUserSchema,
   loginSchema,
   createPostSchema,
   createCategorySchema,
@@ -140,9 +136,24 @@ class ApiClient {
     return response;
   }
 
-  async logout(): Promise<ClientResponse<null>> {
-    this.clearToken();
-    return { success: true, data: null, statusCode: 200 };
+  async logout(): Promise<ClientResponse<{ message: string }>> {
+    try {
+      // Call server logout endpoint to invalidate token
+      const response = await this.request<{ message: string }>('/auth/logout', {
+        method: 'POST',
+      });
+      
+      // Always clear token regardless of server response
+      this.clearToken();
+      
+      return response.success 
+        ? response 
+        : { success: true, data: { message: 'Logged out locally' }, statusCode: 200 };
+    } catch (error) {
+      // Even if server logout fails, clear local token
+      this.clearToken();
+      return { success: true, data: { message: 'Logged out locally' }, statusCode: 200 };
+    }
   }
 
   async getProfile(): Promise<ClientResponse<User>> {
