@@ -23,7 +23,9 @@ model User {
   updatedAt DateTime @updatedAt
 
   // Relations
-  posts Post[]
+  posts         Post[]
+  polls         Poll[]
+  pollResponses PollResponse[]
 
   @@map("users")
 }
@@ -64,4 +66,97 @@ model Post {
   category Category @relation(fields: [categoryId], references: [id])
 
   @@map("posts")
+}
+
+model Poll {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String?
+  isActive    Boolean   @default(true)
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Foreign Keys
+  authorId Int
+
+  // Relations
+  author    User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  questions PollQuestion[]
+  responses PollResponse[]
+
+  @@map("polls")
+}
+
+model PollQuestion {
+  id           Int      @id @default(autoincrement())
+  question     String
+  questionType String // 'single', 'multiple', 'text'
+  isRequired   Boolean  @default(true)
+  order        Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Foreign Keys
+  pollId Int
+
+  // Relations
+  poll    Poll         @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  options PollOption[]
+  answers PollAnswer[]
+
+  @@map("poll_questions")
+}
+
+model PollOption {
+  id        Int      @id @default(autoincrement())
+  text      String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Foreign Keys
+  questionId Int
+
+  // Relations
+  question PollQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  answers  PollAnswer[]
+
+  @@map("poll_options")
+}
+
+model PollResponse {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Foreign Keys
+  pollId Int
+  userId Int
+
+  // Relations
+  poll    Poll         @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  user    User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  answers PollAnswer[]
+
+  @@unique([pollId, userId])
+  @@map("poll_responses")
+}
+
+model PollAnswer {
+  id         Int     @id @default(autoincrement())
+  textAnswer String?
+
+  // Foreign Keys
+  responseId Int
+  questionId Int
+  optionId   Int?
+
+  // Relations
+  response PollResponse  @relation(fields: [responseId], references: [id], onDelete: Cascade)
+  question PollQuestion  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  option   PollOption?   @relation(fields: [optionId], references: [id], onDelete: Cascade)
+
+  @@map("poll_answers")
 }

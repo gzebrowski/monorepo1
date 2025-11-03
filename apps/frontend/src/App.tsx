@@ -2,8 +2,8 @@ import React from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { Layout } from './components/Layout'
 import { SimpleHomePage } from './pages/SimpleHomePage'
-import { LoginPage, RegisterPage, PostPage, CategoryPage, DashboardPage } from './pages/LoginPage'
-import { AuthProvider } from './contexts/AuthContext'
+import { LoginPage, RegisterPage, PostPage, CategoryPage, DashboardPage } from '@/auth/pages/LoginPage'
+import { AuthProvider } from '@/auth/contexts/AuthContext'
 import './App.css'
 
 function App() {
