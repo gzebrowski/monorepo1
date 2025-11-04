@@ -2,40 +2,55 @@
   "name": "@simpleblog/shared",
   "version": "1.0.0",
   "description": "Shared types, utilities and functions for SimpleBlog monorepo",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "npm run clean && npm run build:esm && npm run build:cjs",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
     "dev": "tsc --watch",
     "clean": "rm -rf dist"
   },
   "dependencies": {
+    "luxon": "^3.7.2",
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "typescript": "^5.2.2",
-    "@types/node": "^20.8.0"
+    "@types/luxon": "^3.7.1",
+    "@types/node": "^20.8.0",
+    "typescript": "^5.2.2"
   },
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js",
+      "types": "./dist/esm/index.d.ts"
     },
     "./types": {
-      "import": "./dist/types/index.js",
-      "require": "./dist/types/index.js",
-      "types": "./dist/types/index.d.ts"
+      "import": "./dist/esm/types/index.js",
+      "require": "./dist/cjs/types/index.js",
+      "types": "./dist/esm/types/index.d.ts"
     },
     "./validation": {
-      "import": "./dist/validation/index.js",
-      "require": "./dist/validation/index.js",
-      "types": "./dist/validation/index.d.ts"
+      "import": "./dist/esm/validation/index.js",
+      "require": "./dist/cjs/validation/index.js",
+      "types": "./dist/esm/validation/index.d.ts"
     },
     "./api": {
-      "import": "./dist/api/index.js",
-      "require": "./dist/api/index.js",
-      "types": "./dist/api/index.d.ts"
+      "import": "./dist/esm/api/index.js",
+      "require": "./dist/cjs/api/index.js",
+      "types": "./dist/esm/api/index.d.ts"
+    },
+    "./utils": {
+      "import": "./dist/esm/utils/index.js",
+      "require": "./dist/cjs/utils/index.js",
+      "types": "./dist/esm/utils/index.d.ts"
+    },
+    "./admin": {
+      "import": "./dist/esm/admin/index.js",
+      "require": "./dist/cjs/admin/index.js",
+      "types": "./dist/esm/admin/index.d.ts"
     }
   }
 }

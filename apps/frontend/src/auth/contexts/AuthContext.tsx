@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
-import { apiClient } from '../../api/client'
+import { apiService } from '../../api/client'
 import type { User, RegisterRequest, ChangePasswordRequest } from '@simpleblog/shared'
 
 interface AuthContextType {
@@ -43,16 +43,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const checkAuthStatus = async () => {
     try {
-      const response = await apiClient.getProfile()
+      const response = await apiService.getProfile()
       if (response.success) {
         setUser(response.data)
       } else {
         // Token is invalid, clear it
-        apiClient.clearToken()
+        apiService.clearToken()
       }
     } catch (error) {
       // Token is invalid, clear it
-      apiClient.clearToken()
+      apiService.clearToken()
     } finally {
       setLoading(false)
     }
@@ -60,7 +60,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await apiClient.login({ email, password })
+      const response = await apiService.login({ email, password })
       if (response.success) {
         setUser(response.data.user)
       } else {
@@ -73,7 +73,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const register = async (data: RegisterRequest) => {
     try {
-      const response = await apiClient.register(data)
+      const response = await apiService.register(data)
       if (response.success) {
         setUser(response.data.user)
       } else {
@@ -87,7 +87,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = async () => {
     try {
       // Call logout endpoint to invalidate token on server
-      await apiClient.logout()
+      await apiService.logout()
     } catch (error) {
       // Even if server logout fails, clear local state
       console.warn('Server logout failed:', error)
@@ -98,7 +98,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const changePassword = async (data: ChangePasswordRequest) => {
     try {
-      const response = await apiClient.changePassword(data)
+      const response = await apiService.changePassword(data)
       if (!response.success) {
         throw new Error(response.error)
       }

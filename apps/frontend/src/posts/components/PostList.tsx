@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { PostWithRelations } from '@simpleblog/shared';
-import { apiClient } from '../../api/client';
+import { apiService } from '../../api/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
@@ -20,7 +20,7 @@ export const PostList: React.FC<PostListProps> = ({ categoryId, onPostClick }) =
       setError(null);
       
       try {
-        const response = await apiClient.getPosts(
+        const response = await apiService.getPosts(
           { categoryId, isPublished: true }
         );
         

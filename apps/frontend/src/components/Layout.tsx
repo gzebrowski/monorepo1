@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/auth/contexts/AuthContext'
+import { Toaster } from '@/components/ui/toaster'
 
 interface LayoutProps {
   children: React.ReactNode
@@ -156,6 +157,9 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
         </div>
       </footer>
+      
+      {/* Toast notifications */}
+      <Toaster />
     </div>
   )
 }

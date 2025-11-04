@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { Category } from '@simpleblog/shared';
-import { apiClient } from '../../api/client';
+import { apiService } from '../../api/client';
 import { Button } from '@/components/ui/button';
 
 interface CategorySelectorProps {
@@ -22,7 +22,7 @@ export const CategorySelector: React.FC<CategorySelectorProps> = ({
       setError(null);
       
       try {
-        const response = await apiClient.getCategories();
+        const response = await apiService.getCategories();
         
         if (response.success) {
           setCategories(response.data);
