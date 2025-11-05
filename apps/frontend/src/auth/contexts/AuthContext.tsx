@@ -44,8 +44,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const checkAuthStatus = async () => {
     try {
       const response = await apiService.getProfile()
-      if (response.success) {
-        setUser(response.data)
+      if (response) {
+        setUser(response)
       } else {
         // Token is invalid, clear it
         apiService.clearToken()
@@ -61,10 +61,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string) => {
     try {
       const response = await apiService.login({ email, password })
-      if (response.success) {
-        setUser(response.data.user)
-      } else {
-        throw new Error(response.error)
+      if (response.user) {
+        setUser(response.user)
       }
     } catch (error) {
       throw error instanceof Error ? error : new Error('Login failed')
@@ -74,10 +72,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const register = async (data: RegisterRequest) => {
     try {
       const response = await apiService.register(data)
-      if (response.success) {
-        setUser(response.data.user)
-      } else {
-        throw new Error(response.error)
+      if (response.user) {
+        setUser(response.user)
       }
     } catch (error) {
       throw error instanceof Error ? error : new Error('Registration failed')
@@ -98,10 +94,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const changePassword = async (data: ChangePasswordRequest) => {
     try {
-      const response = await apiService.changePassword(data)
-      if (!response.success) {
-        throw new Error(response.error)
-      }
+      await apiService.changePassword(data)
     } catch (error) {
       throw error instanceof Error ? error : new Error('Password change failed')
     }

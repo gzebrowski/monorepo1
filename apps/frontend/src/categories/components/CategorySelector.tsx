@@ -24,10 +24,8 @@ export const CategorySelector: React.FC<CategorySelectorProps> = ({
       try {
         const response = await apiService.getCategories();
         
-        if (response.success) {
-          setCategories(response.data);
-        } else {
-          setError(response.error);
+        if (response) {
+          setCategories(response);
         }
       } catch (error) {
         setError(error instanceof Error ? error.message : 'Nieznany błąd');

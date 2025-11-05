@@ -4,7 +4,9 @@ import {
     ExistingFormData, 
     NewFormData, 
     CommonPostResult, 
-    ActionIdsType 
+    ActionIdsType, 
+    GetModelsType,
+    GetModelItemsType
 } from '@simpleblog/shared/admin';
 import { AutoCompleteOption } from '../../components/ui';
 
@@ -23,13 +25,15 @@ export class AdminService {
         this.apiService = new ApiClient('/api/admin/');
     }
     async getAllModels() {
-        return await this.apiService.get<any>('models');
+        return await this.apiService.get<GetModelsType>('models');
     }
     async getModelItems(model: string, page: number = 0, filters: Record<string, any> = {}) {
-        return await this.apiService.get<any>(`items/${model}`, {
+        const result = await this.apiService.get<GetModelItemsType>(`items/${model}`, {
             p: page,
             ...filters,
         });
+        return result;
+        // console.log(result.data);
     }
     async getModelItem(model: string, idItem: string, extraApiParams?: Record<string, any>) {
         return await this.apiService.get<CommonReturnModelItemType>(`items/${model}/${idItem}`, extraApiParams);
