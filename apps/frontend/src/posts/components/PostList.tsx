@@ -24,10 +24,8 @@ export const PostList: React.FC<PostListProps> = ({ categoryId, onPostClick }) =
           { categoryId, isPublished: true }
         );
         
-        if (response.success) {
-          setPosts(response.data);
-        } else {
-          setError(response.error);
+        if (response) {
+          setPosts(response);
         }
       } catch (error) {
         setError(error instanceof Error ? error.message : 'Nieznany błąd');

@@ -54,7 +54,7 @@ export const apiUrl = (path: string = '') => {
   const baseUrl = publicConfig.apiUrl.endsWith('/') 
     ? publicConfig.apiUrl.slice(0, -1) 
     : publicConfig.apiUrl
-  const apiPath = path.startsWith('/') ? path : `/${path}`
+  const apiPath = (!path || path.startsWith('/')) ? path : `/${path}`
   return `${baseUrl}${apiPath}`
 }
 

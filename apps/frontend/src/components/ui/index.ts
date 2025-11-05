@@ -42,4 +42,18 @@ export { ConfirmDialog, DeleteConfirmDialog, LogoutConfirmDialog, SaveConfirmDia
 
 // Re-export types
 export type { AutoCompleteOption, AutoCompleteProps } from './autocomplete'
-export type { DatetimePickerProps } from './datetime-picker'
+export type { DatetimePickerProps } from './datetime-picker';
+export {
+    Sheet,
+    SheetContent,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+    SheetClose,
+    SheetPortal,
+    SheetOverlay,
+    SheetFooter,
+    SheetDescription
+} from './sheet';
+export * from './collapsible';
+export * from './separator';
