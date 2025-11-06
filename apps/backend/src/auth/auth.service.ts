@@ -32,7 +32,7 @@ export class AuthService {
   async login(loginDto: LoginDto) {
     const user = await this.validateUser(loginDto.email, loginDto.password);
     if (!user) {
-      throw new Error('Invalid credentials');
+      return { access_token: null, user: null, error: { code:'wrong_credentials', message: 'Invalid credentials'} };
     }
 
     // Generate secure token and its hash
@@ -52,13 +52,14 @@ export class AuthService {
     return {
       access_token: this.jwtService.sign(payload),
       user,
+      error: null,
     };
   }
 
   async register(registerDto: RegisterDto) {
     const existingUser = await this.usersService.findByEmail(registerDto.email);
     if (existingUser) {
-      throw new Error('User already exists');
+      return { access_token: null, user: null, error: { code:'user_exists', message: 'User already exists'} };
     }
 
     const user = await this.usersService.create(registerDto);
@@ -80,13 +81,14 @@ export class AuthService {
     return {
       access_token: this.jwtService.sign(payload),
       user,
+      error: null,
     };
   }
 
   async changePassword(userId: number, changePasswordDto: ChangePasswordDto) {
     const user = await this.usersService.findOneWithPassword(userId);
     if (!user) {
-      throw new Error('User not found');
+      return { message: 'User not found', error: { code: 'user_not_found', message: 'User not found' } };
     }
 
     const isCurrentPasswordValid = await bcrypt.compare(
@@ -102,7 +104,7 @@ export class AuthService {
       password: changePasswordDto.newPassword,
     });
 
-    return { message: 'Password changed successfully' };
+    return { message: 'Password changed successfully', error: null};
   }
 
   async logout(userId: number) {

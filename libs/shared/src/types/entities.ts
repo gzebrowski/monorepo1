@@ -123,6 +123,7 @@ export interface ChangePasswordRequest {
 export interface AuthResponse {
   access_token: string;
   user: User;
+  error: { code: string; message: string } | null;
 }
 
 // API Response types

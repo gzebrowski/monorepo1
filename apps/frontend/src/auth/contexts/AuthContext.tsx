@@ -1,11 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { apiService } from '../../api/client'
-import type { User, RegisterRequest, ChangePasswordRequest } from '@simpleblog/shared'
+import type { User, RegisterRequest, ChangePasswordRequest, AuthResponse } from '@simpleblog/shared'
 
 interface AuthContextType {
   user: User | null
-  login: (email: string, password: string) => Promise<void>
-  register: (data: RegisterRequest) => Promise<void>
+  login: (email: string, password: string) => Promise<AuthResponse>
+  register: (data: RegisterRequest) => Promise<AuthResponse>
   logout: () => Promise<void>
   changePassword: (data: ChangePasswordRequest) => Promise<void>
   isAuthenticated: boolean
@@ -64,6 +64,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (response.user) {
         setUser(response.user)
       }
+      return response;
     } catch (error) {
       throw error instanceof Error ? error : new Error('Login failed')
     }
@@ -75,6 +76,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (response.user) {
         setUser(response.user)
       }
+      return response;
     } catch (error) {
       throw error instanceof Error ? error : new Error('Registration failed')
     }

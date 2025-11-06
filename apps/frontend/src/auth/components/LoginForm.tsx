@@ -5,8 +5,17 @@ import { loginSchema, type LoginRequest } from '@simpleblog/shared';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../../components/ui/card';
-
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '../../components/ui/card';
+import {
+  Alert,
+} from '../../components/ui/alert';
 interface LoginFormProps {
   onSuccess?: () => void;
   onError?: (error: string) => void;
@@ -14,6 +23,7 @@ interface LoginFormProps {
 
 export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onError }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { login } = useAuth();
 
   const {
@@ -25,11 +35,16 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onError }) => {
   });
 
   const onSubmit = async (data: LoginRequest) => {
+    setErrorMessage(null);
     setIsLoading(true);
     try {
-      await login(data.email, data.password);
-      console.log('Login successful');
-      onSuccess?.();
+      const loginResponse = await login(data.email, data.password);
+      if (!loginResponse.error) {
+        onSuccess?.();
+      } else {
+        console.error('Login failed:', loginResponse.error);
+        setErrorMessage(loginResponse.error.message);
+      }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Nieznany błąd';
       console.error('Login error:', errorMessage);
@@ -45,6 +60,11 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onError }) => {
         <CardTitle>Logowanie</CardTitle>
         <CardDescription>
           Wprowadź swoje dane aby się zalogować
+          {errorMessage && (
+            <Alert variant="destructive" className="mt-4">
+              {errorMessage}
+            </Alert>
+          )}
         </CardDescription>
       </CardHeader>
       
