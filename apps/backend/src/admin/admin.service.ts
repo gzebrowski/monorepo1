@@ -5,9 +5,10 @@ import {
 
 import {
     AdminService as AdminLogicService,
-} from '@simpleblog/shared/src/admin';
+    ExistingFormData, 
+    NewFormData
+} from '@simpleblog/shared/admin';
 import adminDefinitions from './adminlist';
-import { ExistingFormData, NewFormData } from '@simpleblog/shared/src/admin';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 
@@ -21,7 +22,7 @@ export class AdminService {
     getModels(): Record<string, string> {
         return this.adminLogicService.getModels();
     }
-    async getModelItems(req: Request, model: string, page: number, filters: Record<string, any> = {}) {
+    async getModelItems(req: Request, model: string, page: number, filters: Record<string, any> = {}): Promise<any> {
         // This method should interact with the BaseAdminModel to fetch items
         // For simplicity, we will just return a mock response here
         return await this.adminLogicService.getModelItems(req, model, page, filters);
@@ -37,7 +38,7 @@ export class AdminService {
             throw error;
         }
     }
-    async getModelItem(req: Request, model: string, idItem: string, params: Record<string, any> = {}) {
+    async getModelItem(req: Request, model: string, idItem: string, params: Record<string, any> = {}): Promise<any> {
         // This method should interact with the BaseAdminModel to fetch items
         // For simplicity, we will just return a mock response here
         return await this.adminLogicService.getModelItem(req, model, idItem, params);
@@ -66,7 +67,7 @@ export class AdminService {
             throw error;
         }
     }
-    async getModelMetadata(req: Request, model: string, params: Record<string, any> = {}) {
+    async getModelMetadata(req: Request, model: string, params: Record<string, any> = {}): Promise<any> {
         // This method should interact with the BaseAdminModel to fetch metadata
         // For simplicity, we will just return a mock response here
         return await this.adminLogicService.getModelMetadata(req, model, params);

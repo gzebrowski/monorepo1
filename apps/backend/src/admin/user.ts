@@ -1,5 +1,4 @@
-import { ActionType, BaseAdminModel, ValidationError } from '@simpleblog/shared/src/admin/baseAdmin';
-import { validateEmail } from '@simpleblog/shared/src/admin';
+import { ActionType, BaseAdminModel, ValidationError, validateEmail } from '@simpleblog/shared/admin';
 
 
 export class UserAdmin extends BaseAdminModel {

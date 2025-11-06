@@ -12,12 +12,12 @@ import {
 } from '@nestjs/common';
 
 import { AdminService } from './admin.service';
-import { GetModelItemsType, ValidationError, ApiResponseError, CommonPostResult } from '@simpleblog/shared/src/admin';
-import { PrismaClient } from '@prisma/client';
+import { GetModelItemsType, ValidationError, ApiResponseError, CommonPostResult } from '@simpleblog/shared/admin';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Controller('admin')
 export class AdminController {
-	constructor(private adminService: AdminService, private readonly prisma: PrismaClient) {}
+	constructor(private adminService: AdminService, private readonly prisma: PrismaService) {}
 
 	getPostResult(@Request() req, data: any, error?: any): CommonPostResult {
         if (error) {
