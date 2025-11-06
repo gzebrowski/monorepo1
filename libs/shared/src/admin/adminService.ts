@@ -181,7 +181,7 @@ export class AdminService {
         return modelInstance.getPrefetchedRelations(fields, fieldRelationMap);
     }
 
-    async getModelItems(req: any, prisma: PrismaClient, model: string, page: number, filters: Record<string, any> = {}) {
+    async getModelItems(req: any, model: string, page: number, filters: Record<string, any> = {}) {
         // This method should interact with the BaseAdminModel to fetch items
         // For simplicity, we will just return a mock response here
         const adminModel: BaseAdminModel | undefined = (this.modelMap as any)[model]?.cls;
@@ -189,7 +189,7 @@ export class AdminService {
         if (!adminModel) {
             throw new NotFoundException(`Model ${model} not found`);
         }
-        const modelInstance = new (adminModel as any)(prisma);
+        const modelInstance = new (adminModel as any)(this.prisma);
         const total: number = await modelInstance.getTotalCount(filters);
         const items = await modelInstance.filterItems(page, filters);
         const listDisplayFields = await modelInstance.getListDisplayFields();
@@ -198,7 +198,7 @@ export class AdminService {
         const orderingFields = await modelInstance.getOrderingFields();
         const canAddItem = await modelInstance.canAddObject(req);
         const actions = await modelInstance.getActions();
-        const { fieldsAndTypes, filterTypes, listFilterFields } = await this.getSchemaInfo(prisma, adminModel, modelInstance, true);
+        const { fieldsAndTypes, filterTypes, listFilterFields } = await this.getSchemaInfo(this.prisma, adminModel, modelInstance, true);
         return {
             model,
             total,
@@ -234,7 +234,7 @@ export class AdminService {
     //     return modelInstance.getAutocompleteItems(autocompleteConf.searchFields, autocompleteConf.displayFields, query);
     // }
 
-    async performAction(req: any, user: any, prisma: PrismaClient, model: string, action: string, ids: string[]) {
+    async performAction(req: any, user: any, model: string, action: string, ids: string[]) {
         // This method should perform the action on the specified model
         // For simplicity, we will just return a mock response here
         const adminModel: BaseAdminModel | undefined = (this.modelMap as any)[model]?.cls;
@@ -243,19 +243,19 @@ export class AdminService {
             throw new NotFoundException(`Model ${model} not found`);
         }
 
-        const modelInstance = new (adminModel as any)(prisma);
+        const modelInstance = new (adminModel as any)(this.prisma);
         return modelInstance.performAction(req, user, action, ids);
     }
 
 
-    async getModelItem(req: any, prisma: PrismaClient, model: string, idItem: string, params: Record<string, any> = {}): Promise<CommonReturnModelItemType> {
+    async getModelItem(req: any, model: string, idItem: string, params: Record<string, any> = {}): Promise<CommonReturnModelItemType> {
         const adminModel: BaseAdminModel | undefined = (this.modelMap as any)[model]?.cls;
 
         if (!adminModel) {
             throw new NotFoundException(`Model ${model} not found`);
         }
 
-        const modelInstance = new (adminModel as any)(prisma);
+        const modelInstance = new (adminModel as any)(this.prisma);
         const item = await modelInstance.findById(idItem) as (FindByIdType | null);
         
         const canViewItem = await modelInstance.canViewItem(req, item);
@@ -266,15 +266,15 @@ export class AdminService {
         if (!item) {
             throw new NotFoundException(`Item with id ${idItem} not found in model ${model}`);
         }
-        const { fieldsAndTypes, filterTypes, inlines } = await this.getSchemaInfo(prisma, adminModel, modelInstance, false);
-        const prefetchedRelations = await this.getPrefetchedRelationItems(prisma, model, modelInstance.prefetchRelations || []);
+        const { fieldsAndTypes, filterTypes, inlines } = await this.getSchemaInfo(this.prisma, adminModel, modelInstance, false);
+        const prefetchedRelations = await this.getPrefetchedRelationItems(this.prisma, model, modelInstance.prefetchRelations || []);
 
         const relations = await modelInstance.getOneToOneRelationsFromDMMF() as GetOneToOneRelationsFromDMMF;
         const inlineModels = inlines?.map(inline => inline.model.toLowerCase()) || [];
 
         const allRelationModels: string[] = relations.relations.map(relation => relation.to.model);
-        const relationModelsToAdminInstanceMap = await this.getAdminInstancesMap(prisma, allRelationModels);
-        const revRelationModelsToAdminInstanceMap = await this.getAdminInstancesMap(prisma, inlineModels);
+        const relationModelsToAdminInstanceMap = await this.getAdminInstancesMap(this.prisma, allRelationModels);
+        const revRelationModelsToAdminInstanceMap = await this.getAdminInstancesMap(this.prisma, inlineModels);
         const inlineItems = await modelInstance.getInlineItems(inlines, idItem, revRelationModelsToAdminInstanceMap) as GetInlineItemsType;
         const relationToLabelMap = await modelInstance.getRelationToLabelMap(item, relations, relationModelsToAdminInstanceMap) as GetRelationToLabelMapType;
         const excludes = await modelInstance.getExcludeFields() || [];
@@ -300,22 +300,22 @@ export class AdminService {
             extraFields,
         };
     }
-    async getModelMetadata(req: any, prisma: PrismaClient, model: string, params: Record<string, any> = {}): Promise<CommonReturnModelItemType> {
+    async getModelMetadata(req: any, model: string, params: Record<string, any> = {}): Promise<CommonReturnModelItemType> {
         const adminModel: BaseAdminModel | undefined = (this.modelMap as any)[model]?.cls;
 
         if (!adminModel) {
             throw new NotFoundException(`Model ${model} not found`);
         }
 
-        const modelInstance = new (adminModel as any)(prisma);
+        const modelInstance = new (adminModel as any)(this.prisma);
 
         const canAddItem = await modelInstance.canAddObject(req);
         if (!canAddItem) {
             throw new ForbiddenException(`You do not have permission to add items to this model`);
         }
 
-        const { fieldsAndTypes, filterTypes, inlines } = await this.getSchemaInfo(prisma, adminModel, modelInstance, false);
-        const prefetchedRelations = await this.getPrefetchedRelationItems(prisma, model, modelInstance.prefetchRelations || []);
+        const { fieldsAndTypes, filterTypes, inlines } = await this.getSchemaInfo(this.prisma, adminModel, modelInstance, false);
+        const prefetchedRelations = await this.getPrefetchedRelationItems(this.prisma, model, modelInstance.prefetchRelations || []);
         const excludes = await modelInstance.getExcludeFields() || [];
         const onlyFields = modelInstance?.fields?.length ? modelInstance.fields : undefined;
         excludes.push(...((params?.['exclude'] as string | undefined) || '').split(',').map(field => field.trim()).filter(field => field !== ''));
@@ -337,14 +337,14 @@ export class AdminService {
             extraFields,
         };
     }
-    async updateModelItem(req: any, prisma: PrismaClient, model: string, idItem: string, itemData: Record<string, any>) {
+    async updateModelItem(req: any, model: string, idItem: string, itemData: Record<string, any>) {
         const adminModel: BaseAdminModel | undefined = (this.modelMap as any)[model]?.cls;
 
         if (!adminModel) {
             throw new NotFoundException(`Model ${model} not found`);
         }
 
-        const modelInstance = new (adminModel as any)(prisma);
+        const modelInstance = new (adminModel as any)(this.prisma);
         const canEditItem = await modelInstance.canUpdateObject(req, idItem);
         if (!canEditItem) {
             throw new ForbiddenException(`You do not have permission to edit this item`);
@@ -352,14 +352,14 @@ export class AdminService {
 
         return await modelInstance.update(idItem, itemData);
     }
-    async createModelItem(req: any, prisma: PrismaClient, model: string, data: Record<string, any>) {
+    async createModelItem(req: any, model: string, data: Record<string, any>) {
         const adminModel: BaseAdminModel | undefined = (this.modelMap as any)[model]?.cls;
 
         if (!adminModel) {
             throw new NotFoundException(`Model ${model} not found`);
         }
-
-        const modelInstance = new (adminModel as any)(prisma);
+        
+        const modelInstance = new (adminModel as any)(this.prisma);
         const canAddItem = await modelInstance.canAddObject(req);
         if (!canAddItem) {
             throw new ForbiddenException(`You do not have permission to add items to this model`);
@@ -367,7 +367,7 @@ export class AdminService {
 
         return await modelInstance.create(data);
     }
-    async getAutocompleteItems(req: any, prisma: PrismaClient, model: string, targetModel: string, keyField: string, query: string, depData: Record<string, any>) {
+    async getAutocompleteItems(req: any, model: string, targetModel: string, keyField: string, query: string, depData: Record<string, any>) {
         targetModel = targetModel.toLowerCase();
         const adminModel: BaseAdminModel | undefined = (this.modelMap as any)[model]?.cls;
         const adminTargetModel: BaseAdminModel | undefined = (this.modelMap as any)[targetModel]?.cls;
@@ -379,20 +379,20 @@ export class AdminService {
             throw new NotFoundException(`Model ${model} not found`);
         }
 
-        const modelInstance = new (adminModel as any)(prisma);
-        const adminModelInstance = new (adminTargetModel as any)(prisma);
+        const modelInstance = new (adminModel as any)(this.prisma);
+        const adminModelInstance = new (adminTargetModel as any)(this.prisma);
         return await modelInstance.getAutocompleteItems(adminModelInstance, keyField, query, depData);
     }
-    async saveInlines(req: any, prisma: PrismaClient, model: string, idItem: string, existingItems: Record<string, ExistingFormData[]>, newItems: Record<string, NewFormData[]>) {
+    async saveInlines(req: any, model: string, idItem: string, existingItems: Record<string, ExistingFormData[]>, newItems: Record<string, NewFormData[]>) {
         const adminModel: BaseAdminModel | undefined = (this.modelMap as any)[model]?.cls;
         const allModels = new Set(Object.keys(existingItems).concat(Object.keys(newItems)));
-        const adminMap = await this.getAdminInstancesMap(prisma, Array.from(allModels));
+        const adminMap = await this.getAdminInstancesMap(this.prisma, Array.from(allModels));
 
         if (!adminModel) {
             throw new NotFoundException(`Model ${model} not found`);
         }
 
-        const modelInstance = new (adminModel as any)(prisma);
+        const modelInstance = new (adminModel as any)(this.prisma);
         const canEditItem = await modelInstance.canUpdateObject(req, idItem);
         if (!canEditItem) {
             throw new ForbiddenException(`You do not have permission to edit this item`);
@@ -401,14 +401,14 @@ export class AdminService {
         return await modelInstance.saveInlines(idItem, existingItems, newItems, adminMap);
     }
 
-    async deleteObject(req: any, prisma: PrismaClient, model: string, idItem: string) {
+    async deleteObject(req: any, model: string, idItem: string) {
         const adminModel: BaseAdminModel | undefined = (this.modelMap as any)[model]?.cls;
 
         if (!adminModel) {
             throw new NotFoundException(`Model ${model} not found`);
         }
 
-        const modelInstance = new (adminModel as any)(prisma);
+        const modelInstance = new (adminModel as any)(this.prisma);
         const canDeleteItem = await modelInstance.canDeleteObject(req, idItem);
         if (!canDeleteItem) {
             throw new ForbiddenException(`You do not have permission to delete this item`);
@@ -442,14 +442,14 @@ export class AdminService {
         return { extraFieldAndTypes, extraFilterTypes };
     }
 
-    async getModelItemIdByUniqueField(prisma: PrismaClient, model: string, field: string, value: string) {
+    async getModelItemIdByUniqueField(model: string, field: string, value: string) {
         const adminModel: BaseAdminModel | undefined = (this.modelMap as any)[model.toLowerCase()]?.cls;
 
         if (!adminModel) {
             throw new NotFoundException(`Model ${model} not found`);
         }
 
-        const modelInstance = new (adminModel as any)(prisma);
+        const modelInstance = new (adminModel as any)(this.prisma);
         const result = await modelInstance.findByUniqueField(value, field, ['id']);
         return result?.id;
     }
