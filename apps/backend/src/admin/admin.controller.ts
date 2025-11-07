@@ -13,7 +13,7 @@ import {
 
 import { AdminService } from './admin.service';
 import { GetModelItemsType, ValidationError, ApiResponseError, CommonPostResult } from '@simpleblog/shared/admin';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from './prisma.service';
 
 @Controller('admin')
 export class AdminController {

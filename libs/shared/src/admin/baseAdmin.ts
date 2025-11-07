@@ -491,11 +491,24 @@ export class BaseAdminModel {
 
     async getPrismaModelFieldsAndTypes() {
         const model = this.getPrismaModel(false);
-        const result = await this.prismaClient.$queryRaw`SELECT column_name, is_nullable, column_default, data_type, character_maximum_length, udt_name FROM information_schema.columns WHERE table_name = ${model}`;
-        result.forEach((field: FieldDefinition) => {
-            field.help_text = this.fieldsHelpText[field.column_name] || '';
+        const fields = this.getFieldsFromDMMF();
+        //const f = fields[0];
+        // const aa = [f.default, f.isId, f.type, f.isRequired, f.name, f.isUnique, f.isList, f.relationName, f.hasDefaultValue, f.isUpdatedAt];
+        const result: FieldDefinition[] = []; // await this.prismaClient.$queryRaw`SELECT column_name, is_nullable, column_default, data_type, character_maximum_length, udt_name FROM information_schema.columns WHERE table_name = ${model}`;
+        fields.forEach((field) => {
+            const fDef = {
+                column_name: field.name,
+                is_nullable: field.isRequired ? 'NO' : 'YES',
+                column_default: field.hasDefaultValue ? 'default' : null,
+                data_type: field.type.toLowerCase(),
+                character_maximum_length: null,
+                udt_name: null,
+                help_text: this.fieldsHelpText[field.name] || ''
+            };
+            // fDef.help_text = this.fieldsHelpText[field.column_name] || '';
+            result.push(fDef);
         });
-        return result as FieldDefinition[];
+        return result;
     }
     async getUserDefinedTypes(udtName: string) {
         const enumTp = (PrismaMod as any)[udtName];
@@ -514,10 +527,22 @@ export class BaseAdminModel {
             where: filtersData,
         });
     }
-    async findById(id: string) {
+    parseIdValue(id: string): [string, string | number] {
+        const fields = this.getFieldsFromDMMF();
+        const idField = fields.find(f => f.isId);
+        if (!idField) {
+            throw new Error('No ID field found for model ' + this.getPrismaModel());
+        }
+        if ((idField.type || '').toLowerCase() === 'int') {
+            return [idField.name, parseInt(id, 10) as number];
+        }
+        return [idField.name, id];
+    }
+    async findById(id: string | number) {
         const model = this.getPrismaModel();
+        const [pkName, pkVal] = this.parseIdValue(id.toString());
         return await this.prismaClient[model].findUnique({
-            where: { id },
+            where: { [pkName]: pkVal },
         });
     }
     async findByUniqueField(value: any, field: string, getFields?: string[]) {
@@ -813,10 +838,11 @@ export class BaseAdminModel {
         return data;
     }
 
-    async _do_update(id: string, data: Record<string, any>) {
+    async _do_update(id: string | number, data: Record<string, any>) {
         const model = this.getPrismaModel();
+        const [pkName, pkVal] = this.parseIdValue(id.toString());
         return await this.prismaClient[model].update({
-            where: { id },
+            where: { [pkName]: pkVal },
             data,
         });
     }
@@ -831,10 +857,11 @@ export class BaseAdminModel {
         await this.onUpdatedModel(result, false);
         return result;
     }
-    async _do_delete(id: string) {
+    async _do_delete(id: string | number) {
         const model = this.getPrismaModel();
+        const [pkName, pkVal] = this.parseIdValue(id.toString());
         return await this.prismaClient[model].delete({
-            where: { id },
+            where: { [pkName]: pkVal },
         });
     }
     async delete(id: string) {
@@ -928,6 +955,28 @@ export class BaseAdminModel {
             throw new ApiResponseError(`Error performing action ${action} on model ${this.prismaModel}: ${error}`, 500);
         }
     }
+    parseIdValues(ids: string[]): [string, (string | number)[]] {
+        const fields = this.getFieldsFromDMMF();
+        const idField = fields.find(f => f.isId);
+        if (!idField) {
+            throw new Error('No ID field found for model ' + this.getPrismaModel());
+        }
+        if ((idField.type || '').toLowerCase() === 'int') {
+            return [idField.name, ids.map(id => parseInt(id, 10) as number)];
+        }
+        return [idField.name, ids];
+    }
+    fixFieldValue(fieldName: string, value: any) {
+        const fieldDef = this.getFieldDefFromDMMF(fieldName);
+        if (!fieldDef) {
+            return value;
+        }
+        if ((fieldDef.type || '').toLowerCase() === 'int') {
+            return parseInt(value.toString(), 10);
+        }
+        return value;
+    }
+
     protected getActionWhereClause(ids: ActionIdsType) {
         if (ids === 'all') {
             return {};
@@ -935,7 +984,8 @@ export class BaseAdminModel {
         if (!Array.isArray(ids) || ids.length === 0) {
             throw new Error('Invalid or empty ids array');
         }
-        return { id: { in: ids } };
+        const [idName, newIds] = this.parseIdValues(ids);
+        return { [idName]: { in: newIds } };
     }
     async deleteSelected(request: any, user: any, ids: ActionIdsType) {
         const model = this.getPrismaModel();
@@ -987,54 +1037,6 @@ export class BaseAdminModel {
         return result;
     }
 
-    async getPrismaModelRelations() {
-        const model = this.getPrismaModel(false);
-        const outgoingRelations = await this.prismaClient.$queryRaw`
-            SELECT 
-                tc.constraint_name,
-                tc.table_name as source_table,
-                kcu.column_name as source_column,
-                ccu.table_name as target_table,
-                ccu.column_name as target_column
-            FROM 
-                information_schema.table_constraints AS tc 
-                JOIN information_schema.key_column_usage AS kcu
-                    ON tc.constraint_name = kcu.constraint_name
-                    AND tc.table_schema = kcu.table_schema
-                JOIN information_schema.constraint_column_usage AS ccu
-                    ON ccu.constraint_name = tc.constraint_name
-                    AND ccu.table_schema = tc.table_schema
-            WHERE 
-                tc.constraint_type = 'FOREIGN KEY' 
-                AND tc.table_name = ${model}
-        `;
-        return outgoingRelations;
-    }
-
-    async getPrismaModelIncomingRelations() {
-        const model = this.getPrismaModel(false);
-        const incomingRelations = await this.prismaClient.$queryRaw`
-            SELECT 
-                tc.constraint_name,
-                tc.table_name as source_table,
-                kcu.column_name as source_column,
-                ccu.table_name as target_table,
-                ccu.column_name as target_column
-            FROM 
-                information_schema.table_constraints AS tc 
-                JOIN information_schema.key_column_usage AS kcu
-                    ON tc.constraint_name = kcu.constraint_name
-                    AND tc.table_schema = kcu.table_schema
-                JOIN information_schema.constraint_column_usage AS ccu
-                    ON ccu.constraint_name = tc.constraint_name
-                    AND ccu.table_schema = tc.table_schema
-            WHERE 
-                tc.constraint_type = 'FOREIGN KEY' 
-                AND ccu.table_name = ${model}
-        `;
-
-        return incomingRelations;
-    }
     getFieldsFromDMMF(): DMMMFieldType[] {
         const model = this.getPrismaModel(false);
         const dmmf = Prisma.dmmf;
@@ -1164,13 +1166,22 @@ export class BaseAdminModel {
             allRelationFields: relationFields
         };
     }
+    findPkField(): string {
+        const fields = this.getFieldsFromDMMF();
+        const pkField = fields.find(f => f.isId);
+        if (!pkField) {
+            throw new Error(`No primary key field found for model ${this.getPrismaModel()}`);
+        }
+        return pkField.name;
+    }
     async getRelationFilters(relModelInstance: BaseAdminModel, foundRelation: GetOneToOneRelationsFromDMMFElement): Promise<{ label: string, value: any }[]> {
         /*
           to be used for filtering by related items in the sidebar filters on the list items page
         */
-        const model = relModelInstance.getPrismaModel();
+        // const model = relModelInstance.getPrismaModel();
+        const pkField = relModelInstance.findPkField();
         const items = await relModelInstance.filterItems(undefined, {}, {
-            id: true,
+            [pkField]: true,
             [foundRelation.to.dbField]: true,
         });
         return await Promise.all(items.map(async (item: any) => {
@@ -1206,9 +1217,10 @@ export class BaseAdminModel {
                     extraParams.orderBy = await relAdminInstance.defaultOrderingClause(inline.orderBy);
                 }
                 if (whereField) {
+                    const pkField = relAdminInstance.findPkField();
                     const items = await relAdminInstance.prismaClient[relModel].findMany({
                         select: {
-                            id: true,
+                            [pkField]: true,
                         },
                         where: {
                             [whereField]: idItem,
@@ -1252,6 +1264,7 @@ export class BaseAdminModel {
                 const relRelations = await relAdminInstance.getOneToOneRelationsFromDMMF();
                 const relation = relRelations.relations.find(rel => rel.to.model === myModel);
                 if (relation) {
+                    relAdminInstance.fixFieldValue(relation.from.dbField, idItem)
                     data[relation.from.dbField] = idItem; // Set the relation field to the current item ID
                     await relAdminInstance.create(data);
                 }
