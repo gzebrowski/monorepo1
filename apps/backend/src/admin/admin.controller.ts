@@ -135,7 +135,7 @@ export class AdminController {
     async updateModelItem(@Request() req, @Param('model') model: string, @Param('idItem') idItem: string, @Body() itemData: Record<string, any>) {
         try {
             const data = await this.adminService.getModelItem(req, model, idItem);
-            if (!data || !data.item || !data.item.id) {
+            if (!data || !data.item || !data.item.$pk) {
                 throw new Error(`Item with id ${idItem} not found in model ${model}`);
             }
             // Assuming the modelInstance has a method to update an item
@@ -156,7 +156,7 @@ export class AdminController {
     ) {
         try {
             const data = await this.adminService.getModelItem(req, model, idItem);
-            if (!data || !data.item || !data.item.id) {
+            if (!data || !data.item || !data.item.$pk) {
                 throw new Error(`Item with id ${idItem} not found in model ${model}`);
             }
             // Assuming the modelInstance has a method to update an item
@@ -203,7 +203,7 @@ export class AdminController {
     async deleteObject(@Request() req, @Param('model') model: string, @Param('idItem') idItem: string) {
         try {
             const data = await this.adminService.getModelItem(req, model, idItem);
-            if (!data || !data.item || !data.item.id) {
+            if (!data || !data.item || !data.item.$pk) {
                 throw new Error(`Item with id ${idItem} not found in model ${model}`);
             }
             await this.adminService.deleteObject(req, model, idItem);

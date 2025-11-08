@@ -278,7 +278,7 @@ export class BaseAdminModel {
         this.prismaClient = this.prisma;
     }
     protected prismaModel: string | undefined;
-    protected listDisplayFields: string[] = ['id'];
+    protected listDisplayFields: string[] = [];
     protected listFilterFields: string[] = [];
     protected searchFields: string[] = [];
     protected orderingFields: string[] = [];
@@ -302,6 +302,14 @@ export class BaseAdminModel {
         }
         return forPrisma ? this.prismaModel[0].toLocaleLowerCase() + this.prismaModel.slice(1) : this.prismaModel;
     }
+
+    ensureListDisplayFields() {
+        if (!this.listDisplayFields.length) {
+            this.listDisplayFields = [this.findPkField()];
+        }
+        return this.listDisplayFields;
+    }
+
     public static getPrismaModelPlural() {
         if (!this.prismaModelPlural && !this.prismaModelName) {
             throw new Error('Prisma model plural or name is not defined');
@@ -313,15 +321,19 @@ export class BaseAdminModel {
         const model = this.getPrismaModel();
         return this.prismaClient[model];
     }
+    public getObjectPk(object: Record<string, any>): string | number | null {
+        const pkFieldName = this.findPkField();
+        return object?.[pkFieldName] || null;
+    }
     public async getLabelFromObject(object: Record<string, any>): Promise<string> {
-        return (object?.['name'] || object?.['title'] || object?.['label'] || object?.['id'] || '<unnamed>').toString();
+        return (object?.['name'] || object?.['title'] || object?.['label'] || this.getObjectPk(object) || '<unnamed>').toString();
     }
     async filterItems(page: number | undefined, filters: Record<string, any> = {}, extraFields?: Record<string, any>, take: number = 100) {
         const perPage = (page === undefined) ? undefined : take; // Default items per page
         const skip = (page === undefined) ? 0 : page * (perPage || take);
-        const selectClause = this.getSelectClause(this.listDisplayFields);
+        const selectClause = this.getSelectClause(this.ensureListDisplayFields());
         const filtersData = this.getFiltersClause(filters, this.searchFields);
-        const orderingClause = await this.getOrderingClause(filters, this.listDisplayFields);
+        const orderingClause = await this.getOrderingClause(filters, this.ensureListDisplayFields());
         const queryset = await this.getBaseQset().findMany({
             where: filtersData,
             skip,
@@ -337,8 +349,9 @@ export class BaseAdminModel {
             return field;
         });
         const select: TSelectClauseType = {};
-        if (!fieldNames.includes('id')) {
-            select['id'] = true;
+        const pkFieldName = this.findPkField();
+        if (!fieldNames.includes(pkFieldName)) {
+            select[pkFieldName] = true;
         }
         fieldNames.forEach(field => {
             const fieldParts = field.split('__');
@@ -646,9 +659,10 @@ export class BaseAdminModel {
         fieldsAndTypes.forEach(field => {
             fieldToMetadata[field.column_name] = field;
         });
+        const pkFieldName = this.findPkField();
         const errors: ValidationErrorDetail[] = [];
         for (const key in data) {
-            if (key === 'id') {
+            if (key === pkFieldName) {
                 continue; // Skip ID field
             }
             if (exclude && exclude.includes(key)) {
@@ -754,7 +768,11 @@ export class BaseAdminModel {
             return value;
         }
         if (fieldDefinition.isUnique) {
-            const idCond = id ? { id: { not: id } } : {};
+            let idCond = {};
+            if (id) {
+                const [pkName, pkVal] = this.parseIdValue(id);
+                idCond = { [pkName]: { not: pkVal } };
+            }
             const alreadyExists = await this.getBaseQset().findFirst({
                 where: {
                     ...idCond,
@@ -849,7 +867,7 @@ export class BaseAdminModel {
     async update(id: string, data: Record<string, any>, exclude?: string[], fields?: string[]) {
         const excludeFields = await this.getExcludeFields();
         const allExcludeFields = excludeFields.concat(exclude || []);
-        if (!await this.canUpdateObject(null, { id })) {
+        if (!await this.canUpdateObject(null, { pk: id })) {
             return null;
         }
         const validatedData = await this.prepareUpdateData(await this._validateData(await this.validateCreateData(data, fields, allExcludeFields), id), id);
@@ -904,7 +922,7 @@ export class BaseAdminModel {
         });
     }
     async getListDisplayFields() {
-        return this.listDisplayFields;
+        return this.ensureListDisplayFields();
     }
     async getFieldDependencies() {
         return this.fieldDependencies;
@@ -1116,7 +1134,7 @@ export class BaseAdminModel {
             const relatedItemId = item ? item[destKey] : null;
             if (relatedItemId) {
                 // const displayFields = relationModelsToAdminInstanceMap[relationModel]?.adminModel.;
-                const relatedItem = await relationAdminInstance.findByUniqueField(relatedItemId, relationField, relationAdminInstance.listDisplayFields);
+                const relatedItem = await relationAdminInstance.findByUniqueField(relatedItemId, relationField, relationAdminInstance.ensureListDisplayFields());
                 if (relatedItem) {
                     const label = await relationAdminInstance.getLabelFromObject(relatedItem);
                     relationToLabelMap[destKey] = label;
@@ -1133,6 +1151,10 @@ export class BaseAdminModel {
         // Format the item for display, can be overridden in derived classes
 
         const excludeFields = await this.getExcludeFields();
+        const pkField = this.findPkField();
+        if (item[pkField] !== undefined) {
+            item['$pk'] = item[pkField];
+        }
         if (excludeFields.length > 0) {
             excludeFields.forEach((field) => {
                 delete item[field];
@@ -1230,7 +1252,7 @@ export class BaseAdminModel {
                     const excludeFieldsSet = new Set(inline.excludeFields || []);
                     excludeFieldsSet.add(whereField);
                     modelToIdListMap[inline.model] = {
-                        items: items.map((item: any) => item.id),
+                        items: items.map((item: any) => item[pkField]),
                         exclude: Array.from(excludeFieldsSet).join(','),
                     };
                 }
@@ -1348,12 +1370,14 @@ export class TreeAdminBase extends BaseAdminModel {
         return ['path'];
     }
     async getRelativeObjects(request: any, item?: any) {
-        const filters = (item) ? {'id__$not': item?.id} : {};
+        const pkField = this.findPkField();
+        const filters = (item) ? {[`${pkField}__$not`]: item?.[pkField]} : {};
         return await this.filterItems(undefined, filters);
     }
     override async getExtraFields(request: any, item?: any) {
         const model = this.getPrismaModel();
         const items =  await this.getRelativeObjects(request, item);
+        const pkField = this.findPkField();
 
         return [
             {
@@ -1363,7 +1387,7 @@ export class TreeAdminBase extends BaseAdminModel {
                 type: 'choice',
                 choices: await Promise.all(items.map(async (it: any) => ({
                     label: await this.getLabelFromObject(it),
-                    value: it.id,
+                    value: it[pkField],
                 }))),
             },
             {

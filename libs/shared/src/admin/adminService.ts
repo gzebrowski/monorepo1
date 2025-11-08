@@ -29,6 +29,7 @@ export type ListViewFilterType = {label: string, value: any}[];
 
 export type CommonReturnModelItemType = {
     title?: string;
+    pkFieldName: string;
     item: FindByIdType | null;
     fieldsAndTypes: GetPrismaModelFieldsAndTypes;
     filterTypes: Record<string, ListViewFilterType>;
@@ -285,6 +286,7 @@ export class AdminService {
         const { extraFieldAndTypes, extraFilterTypes } = this.extractFromExtraFields(extraFields);
         return {
             title: await modelInstance.getLabelFromObject(item),
+            pkFieldName: modelInstance.findPkField(),
             item: await modelInstance.formatItem(item),
             fieldsAndTypes: [...filteredFieldAndTypes, ...extraFieldAndTypes] as GetPrismaModelFieldsAndTypes,
             filterTypes: {...filterTypes, ...prefetchedRelations, ...extraFilterTypes},
@@ -324,6 +326,7 @@ export class AdminService {
         const extraFields = await modelInstance.getExtraFields(req) as ExtraFieldDefinition[] | undefined;
         const { extraFieldAndTypes, extraFilterTypes } = this.extractFromExtraFields(extraFields);
         return {
+            pkFieldName: modelInstance.findPkField(),
             item: null as (FindByIdType | null),
             canDeleteItem: false,
             fieldsAndTypes: [...filteredFieldAndTypes, ...extraFieldAndTypes] as GetPrismaModelFieldsAndTypes,
@@ -450,8 +453,9 @@ export class AdminService {
         }
 
         const modelInstance = new (adminModel as any)(this.prisma);
-        const result = await modelInstance.findByUniqueField(value, field, ['id']);
-        return result?.id;
+        const pkFieldName = modelInstance.findPkField();
+        const result = await modelInstance.findByUniqueField(value, field, [pkFieldName]);
+        return result?.[pkFieldName];
     }
 }
 export type GetModelItemType = Prisma.PromiseReturnType<

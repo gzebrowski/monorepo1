@@ -1092,7 +1092,7 @@ const ModelObjectForm: React.FC<AddObjectOrEditProps> = ({
 										<TableHeader>
 											<TableRow>
 												{getAllFieldNames()
-													.filter((f) => f !== 'id')
+													.filter((f) => (f !== objectData.pkFieldName) && (f !== '$pk'))
 													.filter(
 														(f) =>
 															!extraConfig?.fields ||
@@ -1120,7 +1120,7 @@ const ModelObjectForm: React.FC<AddObjectOrEditProps> = ({
 										{layoutTp === 'inline' && (
 											<TableRow>
 												{getAllFieldNames()
-													.filter((f) => f !== 'id')
+													.filter((f) => (f !== objectData.pkFieldName) && (f !== '$pk'))
 													.filter(
 														(f) =>
 															!extraConfig?.fields ||
@@ -1166,7 +1166,7 @@ const ModelObjectForm: React.FC<AddObjectOrEditProps> = ({
 										)}
 										{layoutTp === 'stacked' &&
 											getAllFieldNames()
-												.filter((f) => f !== 'id')
+												.filter((f) => f !== 'id' && f !== '$pk')
 												.filter(
 													(f) =>
 														!extraConfig?.fields ||

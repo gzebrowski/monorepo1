@@ -68,12 +68,9 @@ export class ApiClient {
 
   constructor(baseUrl?: string) {
     baseUrl = baseUrl || API_BASE_PATH;
-    console.log('111 baseUrl:', baseUrl, 'API_BASE_PATH:', API_BASE_PATH, 'API_BASE_URL:', API_BASE_URL);
     const apiBaseUrl = API_BASE_URL.endsWith('/') ? API_BASE_URL.slice(0, -1) : API_BASE_URL;
     this.baseUrl = (baseUrl.startsWith('http') ? baseUrl : apiBaseUrl + baseUrl);
-    console.log('222 baseUrl:', this.baseUrl);
     // Pobierz token z localStorage przy inicjalizacji
-    console.log('API Client initialized with baseUrl:', this.baseUrl);
     this.token = localStorage.getItem('authToken');
     this.axiosInstance = axios.create({
       baseURL: this.baseUrl,

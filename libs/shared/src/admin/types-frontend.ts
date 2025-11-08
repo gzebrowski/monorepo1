@@ -15,6 +15,7 @@ import {
 
 export type CommonReturnModelItemType = {
     title?: string;
+    pkFieldName: string;
     item: FindByIdType | null;
     fieldsAndTypes: GetPrismaModelFieldsAndTypes;
     filterTypes: Record<string, {label: string, value: any}[]>;
