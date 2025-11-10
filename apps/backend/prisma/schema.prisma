@@ -18,7 +18,7 @@ model User {
   lastName  String?
   avatar    String?
   isActive  Boolean  @default(true)
-  tokenHash String?  // Hash of the current JWT token for security
+  tokenHash String? // Hash of the current JWT token for security
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -26,6 +26,7 @@ model User {
   posts         Post[]
   polls         Poll[]
   pollResponses PollResponse[]
+  timeTrackings TimeTracking[]
 
   @@map("users")
 }
@@ -46,16 +47,16 @@ model Category {
 }
 
 model Post {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   title       String
-  slug        String   @unique
+  slug        String    @unique
   content     String
   excerpt     String?
   coverImage  String?
-  isPublished Boolean  @default(false)
+  isPublished Boolean   @default(false)
   publishedAt DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   // Foreign Keys
   authorId   Int
@@ -89,14 +90,20 @@ model Poll {
   @@map("polls")
 }
 
+enum PollQuestionType {
+  single
+  multiple
+  text
+}
+
 model PollQuestion {
-  id           Int      @id @default(autoincrement())
+  id           Int              @id @default(autoincrement())
   question     String
-  questionType String // 'single', 'multiple', 'text'
-  isRequired   Boolean  @default(true)
-  order        Int      @default(0)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  questionType PollQuestionType
+  isRequired   Boolean          @default(true)
+  order        Int              @default(0)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
 
   // Foreign Keys
   pollId Int
@@ -133,11 +140,11 @@ model PollResponse {
 
   // Foreign Keys
   pollId Int
-  userId Int
+  userId Int?
 
   // Relations
   poll    Poll         @relation(fields: [pollId], references: [id], onDelete: Cascade)
-  user    User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user    User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
   answers PollAnswer[]
 
   @@unique([pollId, userId])
@@ -154,9 +161,64 @@ model PollAnswer {
   optionId   Int?
 
   // Relations
-  response PollResponse  @relation(fields: [responseId], references: [id], onDelete: Cascade)
-  question PollQuestion  @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  option   PollOption?   @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  response PollResponse @relation(fields: [responseId], references: [id], onDelete: Cascade)
+  question PollQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  option   PollOption?  @relation(fields: [optionId], references: [id], onDelete: Cascade)
 
   @@map("poll_answers")
+}
+
+model ProjectCategory {
+  id                   Int                  @id @default(autoincrement())
+  name                 String
+  projectSubCategories ProjectSubCategory[]
+  projectId   String   @db.Uuid
+  project      Project         @relation(fields: [projectId], references: [pk])
+  timeTrackings       TimeTracking[]
+}
+
+model ProjectSubCategory {
+  id                String @id @default(uuid()) @db.Uuid
+  projectCategoryId Int
+  name              String
+
+  // Relations
+  projectCategory ProjectCategory @relation(fields: [projectCategoryId], references: [id])
+  timeTrackings   TimeTracking[]
+}
+
+enum ProjectStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  ON_HOLD
+  CANCELLED
+}
+
+model Project {
+  pk                String @id @default(uuid()) @db.Uuid
+  name              String
+  isActive             Boolean            @default(true)
+  startFrom            DateTime?          @default(now())
+  validTo              DateTime?          @db.Date
+  status               ProjectStatus      @default(PLANNED)
+
+  // Relations
+  timeTrackings TimeTracking[]
+  projectCategories ProjectCategory[]
+}
+
+model TimeTracking {
+  id         Int      @id @default(autoincrement())
+  projectId   String   @db.Uuid
+  userId      Int
+  date        DateTime @db.Date
+  hoursSpent  Float
+  projectCategoryId Int
+  projectCategory ProjectCategory @relation(fields: [projectCategoryId], references: [id])
+  project      Project         @relation(fields: [projectId], references: [pk])
+  user         User            @relation(fields: [userId], references: [id])
+  projectSubCategoryId String  @db.Uuid
+  projectSubCategory   ProjectSubCategory @relation(fields: [projectSubCategoryId], references: [id])
+
 }

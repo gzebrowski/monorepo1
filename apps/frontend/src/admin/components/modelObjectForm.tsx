@@ -8,19 +8,12 @@ import {
 	TableRow,
 	TableHeader,
 	TableHead,
-	AutoComplete,
-	AutoCompleteOption,
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
 	DatetimePicker,
 	Textarea,
 	Checkbox,
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
 	Calendar,
 	Input,
 	Button,
@@ -30,6 +23,7 @@ import {
 	CardTitle,
 } from '@/components/ui';
 
+import { AutoComplete, AutoCompleteOption } from './autocomplete';
 
 import { DateTime } from 'luxon';
 
@@ -414,46 +408,35 @@ const ControlForField: React.FC<ControlForFieldProps> = ({
 						/>
 					) : (
 						<>
-							<Select
+							<select
 								value={formData[field] ?? getFieldDefaultValue(field)}
 								required={false}
-								onValueChange={(value) => {
-									setFormValue(field, value);
+								onChange={(e) => {
+									setFormValue(field, e.target.value);
+
 								}}>
-								<SelectTrigger className="w-full">
-									<SelectValue placeholder={`Select ${field}`} />
-								</SelectTrigger>
-								<SelectContent>
-									<SelectItem key={field + '_yesno'} value="true">
-										Yes
-									</SelectItem>
-									<SelectItem key={field + '_yesno'} value="false">
-										No
-									</SelectItem>
-								</SelectContent>
-							</Select>
+								<option value="">----</option>
+								<option value="true">Yes</option>
+								<option value="false">No</option>
+							</select>
 						</>
 					)}
 				</>
 			)}
 			{getFieldType(field) === 'select' && (
-				<Select
+				<select
 					value={formData[field] || getFieldDefaultValue(field)}
 					required={isFieldRequired(fieldDef)}
-					onValueChange={(value) => {
-						setFormValue(field, value);
+					onChange={(e) => {
+						setFormValue(field, e.target.value);
 					}}>
-					<SelectTrigger className="w-full">
-						<SelectValue placeholder={`Select ${field}`} />
-					</SelectTrigger>
-					<SelectContent>
-						{getSelectFieldOptions(field).map((option) => (
-							<SelectItem key={option.value} value={option.value}>
-								{splitCamelCaseWords(option.label, true)}
-							</SelectItem>
-						))}
-					</SelectContent>
-				</Select>
+					<option value="">----</option>
+					{getSelectFieldOptions(field).map((option) => (
+						<option key={option.value} value={option.value}>
+							{splitCamelCaseWords(option.label, true)}
+						</option>
+					))}
+				</select>
 			)}
 			{getFieldType(field) === 'array' && (
 				<Textarea
@@ -484,19 +467,23 @@ const ControlForField: React.FC<ControlForFieldProps> = ({
 				<>
 					<div>
 						<AutoComplete
-							// onInputChange={(value) => updateAutocompleteInput(field, value)}
+							onInputChange={(value) => updateAutocompleteInput(field, value)}
 							disabled={checkDependency(field)}
 							options={currentOptions[field] || []}
 							emptyMessage="No options available"
-							// value={{
-							// 	value: (formData[field] === undefined
-							// 		? getFieldDefaultValue(field)
-							// 		: formData[field]) as string | null,
-							// 	label: relationToLabelMap[field],
-							// }}
-							// onValueChange={(value) => {
-							// 	setAutocompleteOption(field, value);
-							// }}
+							value={{
+								value: (formData[field] === undefined
+									? getFieldDefaultValue(field)
+									: formData[field]) as string | null,
+								label: relationToLabelMap[field],
+							}}
+							onValueChange={(value, label) => {
+								if (value !== null && value !== undefined) {
+									setAutocompleteOption(field, {value, label: label || ''});
+								} else {
+									clearAutocompleteField(field);
+								}
+							}}
 						/>
 					</div>
 					{relationToLabelMap[field] && (
@@ -718,6 +705,7 @@ const ModelObjectForm: React.FC<AddObjectOrEditProps> = ({
 		const fieldDefinition = objectData?.fieldsAndTypes.find(
 			(f) => f.column_name === field,
 		);
+		console.log('Field Definition for', field, fieldDefinition?.data_type);
 		if (fieldDefinition) {
 			if (fieldDefinition.data_type === 'USER-DEFINED') {
 				return 'select';

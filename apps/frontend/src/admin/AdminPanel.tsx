@@ -31,13 +31,6 @@ import {
 	TableRow,
 } from '@/components/ui';
 import { Checkbox } from '@/components/ui';
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '@/components/ui';
 import { CheckedState } from '@radix-ui/react-checkbox';
 import { ActionType } from '@simpleblog/shared/admin';
 import { parseFieldName } from '@simpleblog/shared/admin';
@@ -417,29 +410,26 @@ const AdminPanel: React.FC = () => {
 													</div>
 												</div>
 												<div className="flex action-ctrl items-center mr-2">
-													<Select
+													<select
 														value={currentAction}
+														className='p-1'
 														name="actions"
 														required={false}
-														onValueChange={(value) => {
-															setCurrentAction(value);
+														onChange={(e) => {
+															setCurrentAction(e.target.value);
 														}}>
-														<SelectTrigger className="w-[180px]">
-															<SelectValue placeholder="Select Action" />
-														</SelectTrigger>
-														<SelectContent>
-															{modelItems.actions.map((action) => (
-																<SelectItem
-																	key={action.key || ''}
-																	value={action.key || ''}>
-																	{splitCamelCaseWords(
-																		action.label || '',
+														<option value="">----</option>
+														{modelItems.actions.map((action) => (
+															<option
+																key={action.key || ''}
+																value={action.key || ''}>
+																{splitCamelCaseWords(
+																	action.label || '',
 																		true,
 																	) || ''}
-																</SelectItem>
+																</option>
 															))}
-														</SelectContent>
-													</Select>
+													</select>
 												</div>
 												<div className="flex action-btn items-center">
 													<Button

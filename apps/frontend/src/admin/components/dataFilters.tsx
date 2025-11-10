@@ -11,11 +11,6 @@ import {
     SheetTrigger,
     Button,
     Input,
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
     Popover,
     PopoverContent,
     PopoverTrigger,
@@ -98,21 +93,18 @@ const DataFilters: React.FC<DataFiltersProps> = ({ model, modelItems, onChangeFi
                                         </Button>
                                     </div>
                                     { modelItems.filterTypes[field].length > 20 ? (
-                                    <Select
+                                    <select
                                         value={filterByField?.[field] || ''}
-                                        onValueChange={(value) => changeFilterByField(field, value)}
+                                        onChange={(e) => changeFilterByField(field, e.target.value)}
+                                        className="w-full rounded-md border border-input bg-background px-3 py-2 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                                     >
-                                        <SelectTrigger className="w-full">
-                                            <SelectValue placeholder={`Filter by ${field}`} />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {modelItems.filterTypes[field].map((option) => (
-                                                <SelectItem key={option.value} value={option.value}>
-                                                    {splitCamelCaseWords(option.label, true)}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
+                                        <option value=''>All</option>
+                                        {modelItems.filterTypes[field].map((option) => (
+                                            <option key={option.value} value={option.value}>
+                                                {splitCamelCaseWords(option.label, true)}
+                                            </option>
+                                        ))}
+                                    </select>
                                     ) : (
                                         <div>
                                             {modelItems.filterTypes[field].map((option) => (
