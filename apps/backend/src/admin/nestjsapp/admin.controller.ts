@@ -14,12 +14,15 @@ import {
 import { BaseAdminService } from './admin.service';
 import { GetModelItemsType, ValidationError, ApiResponseError, CommonPostResult } from '@simpleblog/shared/admin';
 import { PrismaService } from './prisma.service';
+// import { NotFoundException } from "@nestjs/common/exceptions/not-found.exception";
+import { ForbiddenException } from "@nestjs/common/exceptions/forbidden.exception";
+
 
 @Controller('admin')
 export class BaseAdminController {
 	private adminService: BaseAdminService;
     constructor(private readonly prisma: PrismaService) {
-        this.adminService = this.getAdminServiceInstance(prisma);
+        this.adminService = this.getAdminServiceInstance(this.prisma);
     }
 
 	getAdminServiceInstance(prisma: PrismaService): BaseAdminService {
@@ -73,17 +76,33 @@ export class BaseAdminController {
     }
 
     @Get('models')
-	getModels() {
-		return this.adminService.getModels();
+	getModels(@Request() req) {
+		if (!this.adminService.checkPermissions(req, req.user, 'view_models')) {
+            throw new ForbiddenException('You do not have permission to view models.');
+        }
+        return this.adminService.getModels();
 	}
 
     @Get('models/:model')
 	getModelMetadata(@Request() req, @Param('model') model: string, @Query() params: Record<string, any> = {}) {
+        if (!this.adminService.checkPermissions(req, req.user, 'view_model_metadata')) {
+            throw new ForbiddenException('You do not have permission to view model metadata.');
+        }
+        if (!this.adminService.checkModelPermissions(req, req.user, model, 'view_metadata')) {
+            throw new ForbiddenException(`You do not have permission to view metadata for model ${model}.`);
+        }
         return this.adminService.getModelMetadata(req, model, params);
 	}
 
     @Get('items/:model')
     async getModelItems(@Request() req, @Param('model') model: string, @Query() filters: Record<string, any> = {}): Promise<GetModelItemsType> {
+        if (!this.adminService.checkPermissions(req, req.user, 'view_model_items')) {
+            throw new ForbiddenException('You do not have permission to view model items.');
+        }
+        if (!this.adminService.checkModelPermissions(req, req.user, model, 'view_items')) {
+            throw new ForbiddenException(`You do not have permission to view items for model ${model}.`);
+        }
+
         try {
             const page = Math.max(0, parseInt(filters.p, 10) || 0);
             delete filters.p;
@@ -118,6 +137,16 @@ export class BaseAdminController {
 
     @Get('items/:model/:idItem')
     async getModelItem(@Request() req, @Param('model') model: string, @Param('idItem') idItem: string, @Query() params: Record<string, any> = {}) {
+        if (!this.adminService.checkPermissions(req, req.user, 'view_model_item')) {
+            throw new ForbiddenException('You do not have permission to view model item.');
+        }
+        if (!this.adminService.checkModelPermissions(req, req.user, model, 'view_item')) {
+            throw new ForbiddenException(`You do not have permission to view items for model ${model}.`);
+        }
+        if (!this.adminService.checkModelItemPermissions(req, req.user, model, idItem, 'view_item')) {
+            throw new ForbiddenException(`You do not have permission to view item ${idItem} for model ${model}.`);
+        }
+
         try {
             const data = await this.adminService.getModelItem(req, model, idItem, params);
             return data;
@@ -129,6 +158,13 @@ export class BaseAdminController {
 
     @Post('items/:model')
     async createModelItem(@Request() req, @Param('model') model: string, @Body() itemData: Record<string, any>) {
+        if (!this.adminService.checkPermissions(req, req.user, 'create_model_item')) {
+            throw new ForbiddenException('You do not have permission to create model item.');
+        }
+        if (!this.adminService.checkModelPermissions(req, req.user, model, 'create_item')) {
+            throw new ForbiddenException(`You do not have permission to create item for model ${model}.`);
+        }
+        
         try {
             const data = await this.adminService.createModelItem(req, model, itemData);
             return this.getPostResult(req, data);
@@ -140,6 +176,17 @@ export class BaseAdminController {
 
     @Put('items/:model/:idItem')
     async updateModelItem(@Request() req, @Param('model') model: string, @Param('idItem') idItem: string, @Body() itemData: Record<string, any>) {
+        
+        if (!this.adminService.checkPermissions(req, req.user, 'update_model_item')) {
+            throw new ForbiddenException('You do not have permission to update model item.');
+        }
+        if (!this.adminService.checkModelPermissions(req, req.user, model, 'update_item')) {
+            throw new ForbiddenException(`You do not have permission to update item for model ${model}.`);
+        }
+        if (!this.adminService.checkModelItemPermissions(req, req.user, model, idItem, 'update_item')) {
+            throw new ForbiddenException(`You do not have permission to update item ${idItem} for model ${model}.`);
+        }
+
         try {
             const data = await this.adminService.getModelItem(req, model, idItem);
             if (!data || !data.item || !data.item.$pk) {
@@ -161,6 +208,16 @@ export class BaseAdminController {
         @Param('idItem') idItem: string,
         @Body() {existingItems, newItems}: {existingItems: Record<string, any>, newItems: Record<string, any>}
     ) {
+        
+        if (!this.adminService.checkPermissions(req, req.user, 'update_model_item')) {
+            throw new ForbiddenException('You do not have permission to update model item.');
+        }
+        if (!this.adminService.checkModelPermissions(req, req.user, model, 'update_item')) {
+            throw new ForbiddenException(`You do not have permission to update item for model ${model}.`);
+        }
+        if (!this.adminService.checkModelItemPermissions(req, req.user, model, idItem, 'update_item')) {
+            throw new ForbiddenException(`You do not have permission to update item ${idItem} for model ${model}.`);
+        }
         try {
             const data = await this.adminService.getModelItem(req, model, idItem);
             if (!data || !data.item || !data.item.$pk) {
@@ -177,6 +234,17 @@ export class BaseAdminController {
 
     @Post('items/:model/:idItem/delete')
     async deleteModelItem(@Request() req, @Param('model') model: string, @Param('idItem') idItem: string) {
+        
+        if (!this.adminService.checkPermissions(req, req.user, 'delete_model_item')) {
+            throw new ForbiddenException('You do not have permission to delete model item.');
+        }
+        if (!this.adminService.checkModelPermissions(req, req.user, model, 'delete_item')) {
+            throw new ForbiddenException(`You do not have permission to delete item for model ${model}.`);
+        }
+        if (!this.adminService.checkModelItemPermissions(req, req.user, model, idItem, 'delete_item')) {
+            throw new ForbiddenException(`You do not have permission to delete item ${idItem} for model ${model}.`);
+        }
+
         try {
             const data = await this.adminService.getModelItems(req, model, 0, { id: idItem });
             if (data.items.length === 0) {
@@ -198,6 +266,13 @@ export class BaseAdminController {
         @Param('model') model: string,
         @Body() { targetModel, depData, keyField, query }: { targetModel: string, depData: Record<string, any>, keyField: string, query: string }
     ) {
+        
+        if (!this.adminService.checkPermissions(req, req.user, 'autocomplete_model_item')) {
+            throw new ForbiddenException('You do not have permission to autocomplete model item.');
+        }
+        if (!this.adminService.checkModelPermissions(req, req.user, model, 'autocomplete_items')) {
+            throw new ForbiddenException(`You do not have permission to autocomplete items for model ${model}.`);
+        }
         try {
             const data = await this.adminService.getAutocompleteItems(req, model, targetModel, keyField, query, depData);
             return data;
@@ -208,6 +283,15 @@ export class BaseAdminController {
     }
     @Delete('items/:model/:idItem')
     async deleteObject(@Request() req, @Param('model') model: string, @Param('idItem') idItem: string) {
+        if (!this.adminService.checkPermissions(req, req.user, 'delete_model_item')) {
+            throw new ForbiddenException('You do not have permission to delete model item.');
+        }
+        if (!this.adminService.checkModelPermissions(req, req.user, model, 'delete_item')) {
+            throw new ForbiddenException(`You do not have permission to delete item for model ${model}.`);
+        }
+        if (!this.adminService.checkModelItemPermissions(req, req.user, model, idItem, 'delete_item')) {
+            throw new ForbiddenException(`You do not have permission to delete item ${idItem} for model ${model}.`);
+        }
         try {
             const data = await this.adminService.getModelItem(req, model, idItem);
             if (!data || !data.item || !data.item.$pk) {
@@ -222,6 +306,13 @@ export class BaseAdminController {
     }
     @Get('get-id-by-unique/:model')
     async getIdByUniqueField(@Request() req, @Param('model') model: string, @Query() query: { field: string, value: string }) {
+        if (!this.adminService.checkPermissions(req, req.user, 'view_model_item')) {
+            throw new ForbiddenException('You do not have permission to view model item.');
+        }
+        if (!this.adminService.checkModelPermissions(req, req.user, model, 'view_item')) {
+            throw new ForbiddenException(`You do not have permission to view items for model ${model}.`);
+        }
+
         try {
             const id = await this.adminService.getModelItemIdByUniqueField(model, query.field, query.value);
             return { id };

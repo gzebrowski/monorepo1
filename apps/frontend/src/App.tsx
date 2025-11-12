@@ -7,7 +7,7 @@ import { PostPage } from './posts/pages/PostPage'
 import { CategoryPage } from './categories/pages/CategoryPage'
 import { AuthProvider } from './auth/contexts/AuthContext'
 import { AlertProvider } from './common/contexts/alerts'
-import AdminPanel from './admin/AdminPanel'
+import { AdminPanel } from './admin/AdminPanel'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import './App.css'
 

@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
-
+import {
+    Request,
+    ForbiddenException
+} from '@nestjs/common';
 import {
     AdminService as AdminLogicService,
     ExistingFormData, 
@@ -11,11 +14,32 @@ import { AdminDefinitionMap } from "@simpleblog/shared/admin";
 @Injectable()
 export class BaseAdminService {
     private adminLogicService: AdminLogicService;
-    constructor(private prisma: PrismaService, ) {
+    constructor(private prisma: PrismaService) {
         const adminDefinitions: AdminDefinitionMap = this.getAdminDefinitions();
-        this.adminLogicService = new AdminLogicService(prisma, adminDefinitions);
+        this.adminLogicService = new AdminLogicService(this.prisma, adminDefinitions);
     }
 
+    checkPermissions(req: Request, user: any, action: string) {
+        // Implement permission checks based on your application's requirements
+        // if (!user || !user.isAdmin) {
+        //     throw new ForbiddenException('You do not have permission to perform this action.');
+        // }
+        return true;
+    }
+    checkModelPermissions(req: Request, user: any, model: string, action: string) {
+        // Implement permission checks based on your application's requirements
+        // if (!user || !user.isAdmin) {
+        //     throw new ForbiddenException('You do not have permission to perform this action on this model.');
+        // }
+        return true;
+    }
+    checkModelItemPermissions(req: Request, user: any, model: string, pk: string, action: string) {
+        // Implement permission checks based on your application's requirements
+        // if (!user || !user.isAdmin) {
+        //     throw new ForbiddenException('You do not have permission to perform this action on this model.');
+        // }
+        return true;
+    }
     getAdminDefinitions(): AdminDefinitionMap {
         throw new Error('Method not implemented.');
     }

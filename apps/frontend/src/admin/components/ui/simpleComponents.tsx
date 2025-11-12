@@ -124,24 +124,41 @@ export const CardContent = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElem
 CardContent.displayName = "CardContent";
 
 // ===== BADGE =====
-export const Badge = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(
-        "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-        "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
-        className
-      )}
-      {...props}
-    />
-  )
+interface BadgeProps extends HTMLAttributes<HTMLDivElement> {
+  variant?: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'outline' | 'ghost';
+}
+
+export const Badge = forwardRef<HTMLDivElement, BadgeProps>(
+  ({ className, variant = 'primary', ...props }, ref) => {
+    const variants = {
+      primary: 'border-transparent bg-blue-600 text-white hover:bg-blue-700',
+      secondary: 'border-transparent bg-gray-600 text-white hover:bg-gray-700',
+      success: 'border-transparent bg-green-600 text-white hover:bg-green-700',
+      danger: 'border-transparent bg-red-600 text-white hover:bg-red-700',
+      warning: 'border-transparent bg-yellow-500 text-white hover:bg-yellow-600',
+      info: 'border-transparent bg-cyan-600 text-white hover:bg-cyan-700',
+      outline: 'border-gray-300 bg-transparent text-gray-700 hover:bg-gray-50',
+      ghost: 'border-transparent bg-gray-100 text-gray-700 hover:bg-gray-200',
+    };
+
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+          variants[variant],
+          className
+        )}
+        {...props}
+      />
+    );
+  }
 );
 Badge.displayName = "Badge";
 
 // ===== BUTTON =====
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'link' | 'primary' | 'secondary' | 'danger' | 'warning' | 'info' | 'primary-outline' | 'secondary-outline' | 'danger-outline' | 'warning-outline' | 'info-outline';
+  variant?: 'link' | 'primary' | 'secondary' | 'danger' | 'warning' | 'info' | 'primary-outline' | 'secondary-outline' | 'danger-outline' | 'warning-outline' | 'info-outline' | 'ghost';
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -153,6 +170,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       warning: 'bg-yellow-600 text-white hover:bg-yellow-700 focus:ring-yellow-500',
       info: 'bg-cyan-600 text-white hover:bg-cyan-700 focus:ring-cyan-500',
       link: 'text-blue-600 hover:text-blue-800 underline bg-transparent',
+      ghost: 'bg-transparent hover:bg-gray-100 focus:ring-gray-500',
       'primary-outline': 'border border-blue-600 text-blue-600 hover:bg-blue-50 focus:ring-blue-500',
       'secondary-outline': 'border border-gray-600 text-gray-600 hover:bg-gray-50 focus:ring-gray-500',
       'danger-outline': 'border border-red-600 text-red-600 hover:bg-red-50 focus:ring-red-500',
@@ -243,21 +261,25 @@ Textarea.displayName = "Textarea";
 // ===== CHECKBOX =====
 interface CheckboxProps {
   checked: boolean;
-  onCheckedChange: (checked: boolean) => void;
+  onCheckedChange?: (checked: boolean) => void;
   className?: string;
+  disabled?: boolean;
+  title?: string;
 }
 
 export const Checkbox = forwardRef<HTMLButtonElement, CheckboxProps>(
-  ({ checked, onCheckedChange, className, ...props }, ref) => (
+  ({ checked, onCheckedChange, className, disabled, title, ...props }, ref) => (
     <button
       ref={ref}
       type="button"
       role="checkbox"
+      title={title}
       aria-checked={checked}
-      onClick={() => onCheckedChange(!checked)}
+      onClick={() => onCheckedChange && onCheckedChange(!checked)}
       className={cn(
         'peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
         checked ? 'bg-primary text-primary-foreground' : 'bg-background',
+        disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
         className
       )}
       {...props}
@@ -480,3 +502,293 @@ export const CollapsibleContent = forwardRef<HTMLDivElement, HTMLAttributes<HTML
   }
 );
 CollapsibleContent.displayName = "CollapsibleContent";
+
+// ===== ALERT COMPONENTS =====
+interface AlertProps extends HTMLAttributes<HTMLDivElement> {
+  variant?: 'default' | 'destructive' | 'warning' | 'success';
+}
+
+export const Alert = forwardRef<HTMLDivElement, AlertProps>(
+  ({ className, variant = 'default', ...props }, ref) => {
+    const variants = {
+      default: 'bg-background text-foreground border-border',
+      destructive: 'border-red-500/50 text-red-600 bg-red-50 [&>svg]:text-red-600',
+      warning: 'border-yellow-500/50 text-yellow-600 bg-yellow-50 [&>svg]:text-yellow-600',
+      success: 'border-green-500/50 text-green-600 bg-green-50 [&>svg]:text-green-600',
+    };
+
+    return (
+      <div
+        ref={ref}
+        role="alert"
+        className={cn(
+          'relative w-full rounded-lg border p-4 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground [&>svg~*]:pl-7',
+          variants[variant],
+          className
+        )}
+        {...props}
+      />
+    );
+  }
+);
+Alert.displayName = "Alert";
+
+export const AlertTitle = forwardRef<HTMLParagraphElement, HTMLAttributes<HTMLHeadingElement>>(
+  ({ className, ...props }, ref) => (
+    <h5
+      ref={ref}
+      className={cn('mb-1 font-medium leading-none tracking-tight', className)}
+      {...props}
+    />
+  )
+);
+AlertTitle.displayName = "AlertTitle";
+
+export const AlertDescription = forwardRef<HTMLParagraphElement, HTMLAttributes<HTMLParagraphElement>>(
+  ({ className, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn('text-sm [&_p]:leading-relaxed', className)}
+      {...props}
+    />
+  )
+);
+AlertDescription.displayName = "AlertDescription";
+
+// Alert Icons for different variants
+export const AlertTriangleIcon = ({ className }: { className?: string }) => (
+  <svg
+    className={cn('h-4 w-4', className)}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+    />
+  </svg>
+);
+
+export const AlertCircleIcon = ({ className }: { className?: string }) => (
+  <svg
+    className={cn('h-4 w-4', className)}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <circle cx="12" cy="12" r="10" />
+    <line x1="12" y1="8" x2="12" y2="12" />
+    <line x1="12" y1="16" x2="12.01" y2="16" />
+  </svg>
+);
+
+export const CheckCircleIcon = ({ className }: { className?: string }) => (
+  <svg
+    className={cn('h-4 w-4', className)}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+    />
+  </svg>
+);
+
+export const InfoIcon = ({ className }: { className?: string }) => (
+  <svg
+    className={cn('h-4 w-4', className)}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <circle cx="12" cy="12" r="10" />
+    <line x1="12" y1="16" x2="12" y2="12" />
+    <line x1="12" y1="8" x2="12.01" y2="8" />
+  </svg>
+);
+
+// ===== ALERT DIALOG COMPONENTS =====
+interface AlertDialogContextType {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+}
+
+const AlertDialogContext = React.createContext<AlertDialogContextType | null>(null);
+
+interface AlertDialogProps {
+  children: ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+export const AlertDialog = ({ children, open: controlledOpen, onOpenChange }: AlertDialogProps) => {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = controlledOpen !== undefined ? controlledOpen : internalOpen;
+  const setOpen = onOpenChange || setInternalOpen;
+
+  return (
+    <AlertDialogContext.Provider value={{ open, setOpen }}>
+      {children}
+    </AlertDialogContext.Provider>
+  );
+};
+
+export const AlertDialogTrigger = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTMLButtonElement>>(
+  ({ children, onClick, ...props }, ref) => {
+    const context = React.useContext(AlertDialogContext);
+    
+    return (
+      <button
+        ref={ref}
+        onClick={(e) => {
+          context?.setOpen(true);
+          onClick?.(e);
+        }}
+        {...props}
+      >
+        {children}
+      </button>
+    );
+  }
+);
+AlertDialogTrigger.displayName = "AlertDialogTrigger";
+
+export const AlertDialogContent = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
+  ({ className, children, ...props }, ref) => {
+    const context = React.useContext(AlertDialogContext);
+    
+    if (!context?.open) return null;
+
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center">
+        {/* Backdrop */}
+        <div 
+          className="fixed inset-0 bg-black/50"
+          onClick={() => context.setOpen(false)}
+        />
+        
+        {/* Dialog */}
+        <div
+          ref={ref}
+          className={cn(
+            "relative z-50 grid w-full max-w-lg gap-4 border bg-background p-6 shadow-lg duration-200 animate-in fade-in-0 zoom-in-95 rounded-lg",
+            className
+          )}
+          {...props}
+        >
+          {children}
+        </div>
+      </div>
+    );
+  }
+);
+AlertDialogContent.displayName = "AlertDialogContent";
+
+export const AlertDialogHeader = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn("flex flex-col space-y-2 text-center sm:text-left", className)}
+      {...props}
+    />
+  )
+);
+AlertDialogHeader.displayName = "AlertDialogHeader";
+
+export const AlertDialogTitle = forwardRef<HTMLHeadingElement, HTMLAttributes<HTMLHeadingElement>>(
+  ({ className, ...props }, ref) => (
+    <h2
+      ref={ref}
+      className={cn("text-lg font-semibold", className)}
+      {...props}
+    />
+  )
+);
+AlertDialogTitle.displayName = "AlertDialogTitle";
+
+export const AlertDialogDescription = forwardRef<HTMLParagraphElement, HTMLAttributes<HTMLParagraphElement>>(
+  ({ className, ...props }, ref) => (
+    <p
+      ref={ref}
+      className={cn("text-sm text-muted-foreground", className)}
+      {...props}
+    />
+  )
+);
+AlertDialogDescription.displayName = "AlertDialogDescription";
+
+export const AlertDialogFooter = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2", className)}
+      {...props}
+    />
+  )
+);
+AlertDialogFooter.displayName = "AlertDialogFooter";
+
+interface AlertDialogActionProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  disabled?: boolean;
+}
+
+export const AlertDialogAction = forwardRef<HTMLButtonElement, AlertDialogActionProps>(
+  ({ className, onClick, disabled, children, ...props }, ref) => {
+    const context = React.useContext(AlertDialogContext);
+    
+    return (
+      <button
+        ref={ref}
+        disabled={disabled}
+        onClick={(e) => {
+          if (!disabled) {
+            onClick?.(e);
+            context?.setOpen(false);
+          }
+        }}
+        className={cn(
+          'inline-flex h-10 items-center justify-center rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </button>
+    );
+  }
+);
+AlertDialogAction.displayName = "AlertDialogAction";
+
+interface AlertDialogCancelProps extends ButtonHTMLAttributes<HTMLButtonElement> {}
+
+export const AlertDialogCancel = forwardRef<HTMLButtonElement, AlertDialogCancelProps>(
+  ({ className, onClick, children, ...props }, ref) => {
+    const context = React.useContext(AlertDialogContext);
+    
+    return (
+      <button
+        ref={ref}
+        onClick={(e) => {
+          onClick?.(e);
+          context?.setOpen(false);
+        }}
+        className={cn(
+          'inline-flex h-10 items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </button>
+    );
+  }
+);
+AlertDialogCancel.displayName = "AlertDialogCancel";
+

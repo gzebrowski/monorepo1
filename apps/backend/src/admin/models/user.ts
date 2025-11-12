@@ -3,7 +3,7 @@ import { ActionType, BaseAdminModel, ValidationError, validateEmail } from '@sim
 
 export class UserAdmin extends BaseAdminModel {
     override prismaModel = 'User';
-    protected override listDisplayFields: string[] = ['id', 'email', 'firstName', 'lastName', 'isActive', 'createdAt', 'updatedAt', 'createdAt'];
+    protected override listDisplayFields: string[] = ['id', 'email', 'firstName', 'lastName', 'isActive', 'createdAt', 'updatedAt'];
     static override prismaModelName = 'User';
     protected override searchFields: string[] = ['#id', 'firstName', 'lastName', 'email'];
     protected override actions: ActionType[] = [

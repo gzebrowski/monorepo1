@@ -11,15 +11,11 @@ import {
     SheetTrigger,
     Button,
     Input,
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-    Calendar,
- } from '@/components/ui';
+ } from './ui/simpleComponents';
+import { Calendar } from './calendar';
 import { GetModelItemsType, splitCamelCaseWords } from '@simpleblog/shared/admin';
 import { parseFieldName } from '@simpleblog/shared/admin';
-import { CalendarDays } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '../utils/utils';
 
 type DataFiltersProps = {
     model: string;
@@ -62,12 +58,12 @@ const DataFilters: React.FC<DataFiltersProps> = ({ model, modelItems, onChangeFi
 
     return (
         <Sheet>
-            <SheetTrigger asChild>
-                <Button variant="outline" size="icon" className="ml-2">
+            <SheetTrigger>
+                <Button variant="primary-outline" className="ml-2">
                     <FilterIcon />
                 </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-96">
+            <SheetContent className="w-96">
                 <SheetHeader>
                     <SheetTitle>Filters</SheetTitle>
                     <SheetDescription>
@@ -86,7 +82,6 @@ const DataFilters: React.FC<DataFiltersProps> = ({ model, modelItems, onChangeFi
                                     <div className=''>
                                         <Button
                                             variant="link"
-                                            size="sm"
                                             onClick={() => changeFilterByField(field, '')}
                                         >
                                             All
@@ -111,7 +106,6 @@ const DataFilters: React.FC<DataFiltersProps> = ({ model, modelItems, onChangeFi
                                                 <div className={cn('', (filterByField?.[field] === option.value) ? 'border' : '')} key={option.value} >
                                                     <Button
                                                         variant="link"
-                                                        size="sm"
                                                         onClick={() => changeFilterByField(field, option.value)}
                                                     >
                                                         {splitCamelCaseWords(option.label, true)}
@@ -128,7 +122,6 @@ const DataFilters: React.FC<DataFiltersProps> = ({ model, modelItems, onChangeFi
                                         <div className=''>
                                             <Button
                                                 variant="link"
-                                                size="sm"
                                                 onClick={() => changeFilterByField(field, '')}
                                             >
                                                 All
@@ -137,7 +130,6 @@ const DataFilters: React.FC<DataFiltersProps> = ({ model, modelItems, onChangeFi
                                         <div className={cn('', (filterByField?.[field] === true) ? 'border' : '')}>
                                             <Button
                                                 variant="link"
-                                                size="sm"
                                                 onClick={() => changeFilterByField(field, true)}
                                             >
                                                 Yes
@@ -146,7 +138,6 @@ const DataFilters: React.FC<DataFiltersProps> = ({ model, modelItems, onChangeFi
                                         <div className={cn('', (filterByField?.[field] === false) ? 'border' : '')}>
                                             <Button
                                                 variant="link"
-                                                size="sm"
                                                 onClick={() => changeFilterByField(field, false)}
                                             >
                                                 No
@@ -157,72 +148,26 @@ const DataFilters: React.FC<DataFiltersProps> = ({ model, modelItems, onChangeFi
                                 { typeByField[field] === 'date' && (
                                     <div>
                                         <div>
-                                        <Popover>
-                                            <PopoverTrigger asChild>
-                                                <div className="flex-4 relative">
-                                                    <Input
-                                                        type="text"
-                                                        placeholder="from"
-                                                        className="flex-1"
-                                                        readOnly={true}
-                                                        value={
-                                                            filterByField?.[`${field}__$gte`] || ''
-                                                        }
-                                                    />
-                                                    <Button
-                                                        type="button"
-                                                        className="mr-auto m-0 p-0 absolute top-0 right-2 rounded-l-none rounded-r-md"
-                                                        variant="ghost">
-                                                        <CalendarDays className="h-4 w-4 opacity-50" />
-                                                    </Button>
-                                                </div>
-                                            </PopoverTrigger>
-                                            <PopoverContent className="w-auto p-0" align="start">
-                                                <Calendar
-                                                    mode="single"
-                                                    onSelect={(selectedDate) => {
-                                                        if (selectedDate) {
-                                                            changeFilterByField(`${field}__$gte`,
-                                                                DateTime.fromJSDate(selectedDate).toISODate(),
-                                                            );
-                                                        }
-                                                    }}
-                                                />
-                                            </PopoverContent>
-                                        </Popover>
-                                        <Popover>
-                                            <PopoverTrigger asChild className='mt-2'>
-                                                <div className="flex-4 relative">
-                                                    <Input
-                                                        type="text"
-                                                        placeholder="to"
-                                                        className="flex-1"
-                                                        readOnly={true}
-                                                        value={
-                                                            filterByField?.[`${field}__$lte`] || ''
-                                                        }
-                                                    />
-                                                    <Button
-                                                        type="button"
-                                                        className="mr-auto m-0 p-0 absolute top-0 right-2 rounded-l-none rounded-r-md"
-                                                        variant="ghost">
-                                                        <CalendarDays className="h-4 w-4 opacity-50" />
-                                                    </Button>
-                                                </div>
-                                            </PopoverTrigger>
-                                            <PopoverContent className="w-auto p-0" align="start">
-                                                <Calendar
-                                                    mode="single"
-                                                    onSelect={(selectedDate) => {
-                                                        if (selectedDate) {
-                                                            changeFilterByField(`${field}__$lte`, 
-                                                                DateTime.fromJSDate(selectedDate).toISODate(),
-                                                            );
-                                                        }
-                                                    }}
-                                                />
-                                            </PopoverContent>
-                                        </Popover>
+                                            <Calendar
+                                                date={filterByField?.[`${field}__$gte`] ? DateTime.fromISO(filterByField?.[`${field}__$gte`]).toJSDate() : undefined}
+                                                onDateChange={(selectedDate) => {
+                                                    if (selectedDate) {
+                                                        changeFilterByField(`${field}__$gte`,
+                                                            DateTime.fromJSDate(selectedDate).toISODate(),
+                                                        );
+                                                    }
+                                                }}
+                                            />
+                                            <Calendar
+                                                date={filterByField?.[`${field}__$lte`] ? DateTime.fromISO(filterByField?.[`${field}__$lte`]).toJSDate() : undefined}
+                                                onDateChange={(selectedDate) => {
+                                                    if (selectedDate) {
+                                                        changeFilterByField(`${field}__$lte`, 
+                                                            DateTime.fromJSDate(selectedDate).toISODate(),
+                                                        );
+                                                    }
+                                                }}
+                                            />
                                         </div>
                                         <div>
                                         <Button

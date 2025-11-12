@@ -8,20 +8,18 @@ import {
 	TableRow,
 	TableHeader,
 	TableHead,
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-	DatetimePicker,
 	Textarea,
 	Checkbox,
-	Calendar,
 	Input,
 	Button,
 	Badge,
 	Card,
 	CardContent,
 	CardTitle,
-} from '@/components/ui';
+} from './ui/simpleComponents';
+
+import { Calendar } from './calendar';
+import { DatetimePicker } from './datetimePicker';
 
 import { AutoComplete, AutoCompleteOption } from './autocomplete';
 
@@ -241,7 +239,7 @@ const SaveButtons: React.FC<SaveButtonsProps> = ({
 			</Button>
 			{ mode === 'edit' && canDelete && (
             <Button
-                variant="destructive"
+                variant="danger"
 				className='ml-4'
 				onClick={() => {
 					if (onDelete) {
@@ -349,53 +347,18 @@ const ControlForField: React.FC<ControlForFieldProps> = ({
 				/>
 			)}
 			{getFieldType(field) === 'date' && (
-				<Popover>
-					<PopoverTrigger asChild>
-						<div className="flex-4 relative">
-							<Input
-								type="text"
-								placeholder="Select date"
-								className="flex-1"
-								readOnly={true}
-								value={
-									formatCellValue(fieldDef, formData[field]) ||
-									getFieldDefaultValue(field)
-								}
-							/>
-							<Button
-								type="button"
-								className="mr-auto m-0 p-0 absolute top-0 right-2 rounded-l-none rounded-r-md"
-								variant="ghost">
-								<CalendarDays className="h-4 w-4 opacity-50" />
-							</Button>
-							{!isFieldRequired(fieldDef) && (
-								<Button
-									type="button"
-									variant="ghost"
-									className="absolute top-0 right-10 rounded-l-none rounded-r-md"
-									onClick={() => {
-										setFormValue(field, '');
-									}}>
-									<X className="h-4 w-4 opacity-50" />
-								</Button>
-							)}
-						</div>
-					</PopoverTrigger>
-					<PopoverContent className="w-auto p-0" align="start">
-						<Calendar
-							mode="single"
-							selected={formData[field] ? new Date(formData[field]) : undefined}
-							onSelect={(selectedDate) => {
-								if (selectedDate) {
-									setFormValue(
-										field,
-										DateTime.fromJSDate(selectedDate).toISODate(),
-									);
-								}
-							}}
-						/>
-					</PopoverContent>
-				</Popover>
+				<Calendar
+					placeholder='Select date'
+					date={formData[field] ? new Date(formData[field]) : undefined}
+					onDateChange={(selectedDate) => {
+						if (selectedDate) {
+							setFormValue(
+								field,
+								DateTime.fromJSDate(selectedDate).toISODate(),
+							);
+						}
+					}}
+				/>
 			)}
 			{getFieldType(field) === 'checkbox' && (
 				<>
@@ -492,7 +455,6 @@ const ControlForField: React.FC<ControlForFieldProps> = ({
 								{relationToLabelMap[field]}
 								<Button
 									variant="ghost"
-									size="icon"
 									className="ml-2 p-0"
 									onClick={() => {
 										clearAutocompleteField(field);
@@ -503,7 +465,6 @@ const ControlForField: React.FC<ControlForFieldProps> = ({
 							<span className="text-sm text-muted-foreground inline-block ml-1">
 								<Button
 									variant="ghost"
-									size="icon"
 									className="ml-2 p-0"
 									onClick={async () => {
 										await redirectToRelObject(field);
@@ -1213,7 +1174,7 @@ const ModelObjectForm: React.FC<AddObjectOrEditProps> = ({
 								<div className="mt-4 flex justify-end">
 									<div className="mt-4">
 										<Button
-											variant="destructive"
+											variant="danger"
 											onClick={() => {
 												performDelete();
 											}}>

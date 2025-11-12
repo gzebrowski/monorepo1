@@ -15,11 +15,11 @@ import {
 	CardTitle,
 	Badge,
 	Button,
-} from '@/components/ui';
+} from './ui/simpleComponents';
 import { AdminService } from '../services/admin.services';
 import { ChevronDown, PlusIcon, AlertTriangle } from 'lucide-react';
 import { ErrorData } from '../models';
-import { cn } from '@/lib/utils';
+import { cn } from '../utils/utils';
 
 type EditObjectProps = {
 	model: string;
@@ -244,7 +244,7 @@ const EditObject: React.FC<EditObjectProps> = ({
 												onOpenChange={(open) =>
 													changeOpenState(inline.model, open)
 												}>
-												<CollapsibleTrigger asChild>
+												<CollapsibleTrigger>
 													<CardTitle className="flex flex-row items-center justify-between cursor-pointer select-none p-4">
 														<div className="flex flex-row items-center">
 															<div>{inline.label}</div>

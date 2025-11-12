@@ -3,12 +3,12 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Calendar } from './calendar';
 
 type DatetimePickerProps = {
-  value: Date | null;
+  value?: Date | null;
   onChange: (date: Date | null) => void;
 };
 
 export function DatetimePicker({ value, onChange }: DatetimePickerProps) {
-  const [date, setDate] = useState<Date | null>(value);
+  const [date, setDate] = useState<Date | null>(value || null);
   const [hours, setHours] = useState<number>(value ? value.getHours() : 0);
   const [minutes, setMinutes] = useState<number>(value ? value.getMinutes() : 0);
   useEffect(() => {
