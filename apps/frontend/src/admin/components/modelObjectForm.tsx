@@ -199,7 +199,7 @@ const SaveButtons: React.FC<SaveButtonsProps> = ({
 			result = await updateModelItem(model, itemId || '', data);
 		}
 		if (result?.status === 'success' && onSave) {
-			onSave(data, saveVariant, result.data?.id);
+			onSave(data, saveVariant, result.data?.$pk); // pkFieldName
 		} else if (result?.status === 'error' && onError) {
 			onError(result);
 		}

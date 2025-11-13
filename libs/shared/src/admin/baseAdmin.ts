@@ -785,12 +785,19 @@ export class BaseAdminModel {
     async getExcludeFields(): Promise<string[]> {
         return this.excludeFields;
     }
-
+    applyPkToData(data: Record<string, any>): Record<string, any> {
+        const pkFieldName = this.findPkField();
+        if (data[pkFieldName] !== undefined) {
+            data.$pk = data[pkFieldName];
+        }
+        return data;
+    }
     async _do_create(data: Record<string, any>) {
         const model = this.getPrismaModel();
-        return await this.prismaClient[model].create({
+        const result = await this.prismaClient[model].create({
             data,
         });
+        return this.applyPkToData(result);
     }
     async create(data: Record<string, any>, exclude?: string[], fields?: string[]) {
         const excludeFields = await this.getExcludeFields();
@@ -900,10 +907,11 @@ export class BaseAdminModel {
     async _do_update(id: string | number, data: Record<string, any>) {
         const model = this.getPrismaModel();
         const [pkName, pkVal] = this.parseIdValue(id.toString());
-        return await this.prismaClient[model].update({
+        const result = await this.prismaClient[model].update({
             where: { [pkName]: pkVal },
             data,
         });
+        return this.applyPkToData(result);
     }
     async update(id: string, data: Record<string, any>, exclude?: string[], fields?: string[]) {
         const excludeFields = await this.getExcludeFields();
