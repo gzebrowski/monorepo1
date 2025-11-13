@@ -27,6 +27,7 @@ model User {
   polls         Poll[]
   pollResponses PollResponse[]
   timeTrackings TimeTracking[]
+  variousFields VariousFields[]
 
   @@map("users")
 }
@@ -172,9 +173,9 @@ model ProjectCategory {
   id                   Int                  @id @default(autoincrement())
   name                 String
   projectSubCategories ProjectSubCategory[]
-  projectId   String   @db.Uuid
-  project      Project         @relation(fields: [projectId], references: [pk])
-  timeTrackings       TimeTracking[]
+  projectId            String               @db.Uuid
+  project              Project              @relation(fields: [projectId], references: [pk])
+  timeTrackings        TimeTracking[]
 }
 
 model ProjectSubCategory {
@@ -196,29 +197,50 @@ enum ProjectStatus {
 }
 
 model Project {
-  pk                String @id @default(uuid()) @db.Uuid
-  name              String
-  isActive             Boolean            @default(true)
-  startFrom            DateTime?          @default(now())
-  validTo              DateTime?          @db.Date
-  status               ProjectStatus      @default(PLANNED)
+  pk        String        @id @default(uuid()) @db.Uuid
+  name      String
+  isActive  Boolean       @default(true)
+  startFrom DateTime?     @default(now())
+  validTo   DateTime?     @db.Date
+  status    ProjectStatus @default(PLANNED)
 
   // Relations
-  timeTrackings TimeTracking[]
+  timeTrackings     TimeTracking[]
   projectCategories ProjectCategory[]
 }
 
 model TimeTracking {
-  id         Int      @id @default(autoincrement())
-  projectId   String   @db.Uuid
-  userId      Int
-  date        DateTime @db.Date
-  hoursSpent  Float
-  projectCategoryId Int
-  projectCategory ProjectCategory @relation(fields: [projectCategoryId], references: [id])
-  project      Project         @relation(fields: [projectId], references: [pk])
-  user         User            @relation(fields: [userId], references: [id])
-  projectSubCategoryId String  @db.Uuid
+  id                   Int                @id @default(autoincrement())
+  projectId            String             @db.Uuid
+  userId               Int
+  date                 DateTime           @db.Date
+  hoursSpent           Float
+  projectCategoryId    Int
+  projectCategory      ProjectCategory    @relation(fields: [projectCategoryId], references: [id])
+  project              Project            @relation(fields: [projectId], references: [pk])
+  user                 User               @relation(fields: [userId], references: [id])
+  projectSubCategoryId String             @db.Uuid
   projectSubCategory   ProjectSubCategory @relation(fields: [projectSubCategoryId], references: [id])
+}
 
+model VariousFields {
+  id                Int                 @id @default(autoincrement())
+  stringField       String
+  intField          Int
+  floatField        Float
+  booleanField      Boolean
+  dateTimeField     DateTime            @default(now())
+  dateField         DateTime            @db.Date
+  arrayField        String[]
+  jsonField         Json?
+  keyField          String              @unique @default(uuid()) @db.Uuid
+  userId            Int
+  user              User                @relation(fields: [userId], references: [id])
+  variousFieldItems VariousFieldItems[]
+}
+
+model VariousFieldItems {
+  id             Int           @id @default(autoincrement())
+  variousFieldId Int
+  variousField   VariousFields @relation(fields: [variousFieldId], references: [id], onDelete: Cascade)
 }

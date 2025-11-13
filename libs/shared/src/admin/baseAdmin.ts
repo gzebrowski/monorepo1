@@ -14,6 +14,7 @@ import { TreeManager } from '../utils/tree';
 export type DMMMFieldType = {
     name: string;
     type: string;
+    kind: string;
     isRequired: boolean;
     isList: boolean;
     isUnique: boolean;
@@ -80,8 +81,9 @@ export type FieldDefinition = {
     is_nullable: string;
     column_default: string | null;
     data_type: string;
+    raw_type: string;
     character_maximum_length: number | null;
-    udt_name: string | null;
+    isPk: boolean;
     help_text?: string;
 };
 
@@ -507,15 +509,44 @@ export class BaseAdminModel {
         const fields = this.getFieldsFromDMMF();
         //const f = fields[0];
         // const aa = [f.default, f.isId, f.type, f.isRequired, f.name, f.isUnique, f.isList, f.relationName, f.hasDefaultValue, f.isUpdatedAt];
-        const result: FieldDefinition[] = []; // await this.prismaClient.$queryRaw`SELECT column_name, is_nullable, column_default, data_type, character_maximum_length, udt_name FROM information_schema.columns WHERE table_name = ${model}`;
+        const result: FieldDefinition[] = []; // await this.prismaClient.$queryRaw`SELECT column_name, is_nullable, column_default, data_type, character_maximum_length FROM information_schema.columns WHERE table_name = ${model}`;
+        const getDataType = (field: DMMMFieldType) => {
+            if (field.kind === 'enum') {
+                return 'enum';
+            }
+            return field.type.toLowerCase();
+        };
+        const getDefaultValue = (field: DMMMFieldType) => {
+            if (field.hasDefaultValue) {
+                if (typeof field.default === 'string') {
+                    return field.default;
+                } else if (typeof field.default === 'number' || typeof field.default === 'boolean') {
+                    return field.default.toString();
+                } else if (field.default === null) {
+                    return 'NULL';
+                } else if (typeof field.default === 'object') {
+                    if (field.default.kind === 'now') {
+                        return 'now()';
+                    }
+                }
+            }
+            return null;
+        };
+        const isRealField = (field: DMMMFieldType) => {
+            return ['scalar', 'enum'].includes(field.kind);
+        };
         fields.forEach((field) => {
+            if (!isRealField(field)) {
+                return;
+            }
             const fDef = {
                 column_name: field.name,
                 is_nullable: field.isRequired ? 'NO' : 'YES',
-                column_default: field.hasDefaultValue ? 'default' : null,
-                data_type: field.type.toLowerCase(),
+                column_default: getDefaultValue(field),
+                isPk: field.isId,
+                data_type: getDataType(field),
+                raw_type: field.type,
                 character_maximum_length: null,
-                udt_name: null,
                 help_text: this.fieldsHelpText[field.name] || ''
             };
             // fDef.help_text = this.fieldsHelpText[field.column_name] || '';
@@ -1064,21 +1095,22 @@ export class BaseAdminModel {
         if (!modelDef) {
             throw new Error(`Model ${model} not found in DMMF`);
         }
-
-        return modelDef.fields.map(field => ({
-            name: field.name,
-            type: field.type,
-            isRequired: !!field.isRequired,
-            isList: !!field.isList,
-            isUnique: !!field.isUnique,
-            isId: !!field.isId,
-            hasDefaultValue: !!field.hasDefaultValue,
-            default: field.default,
-            relationName: field.relationName || undefined,
-            relationFromFields: field.relationFromFields || undefined,
-            relationToFields: field.relationToFields || undefined,
-            isUpdatedAt: !!field.isUpdatedAt,
-        }));
+        return modelDef.fields.map(field => {
+            return {
+                name: field.name,
+                type: field.type,
+                kind: field.kind,
+                isRequired: !!field.isRequired,
+                isList: !!field.isList,
+                isUnique: !!field.isUnique,
+                isId: !!field.isId,
+                hasDefaultValue: !!field.hasDefaultValue,
+                default: field.default,
+                relationName: field.relationName || undefined,
+                relationFromFields: field.relationFromFields || undefined,
+                relationToFields: field.relationToFields || undefined,
+                isUpdatedAt: !!field.isUpdatedAt,
+            }});
     }
     getFieldDefFromDMMF(fieldName: string): DMMMFieldType | undefined {
         const fieldDef = this.getFieldsFromDMMF().find(f => f.name === fieldName);

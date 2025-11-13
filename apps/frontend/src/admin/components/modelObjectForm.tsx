@@ -666,9 +666,8 @@ const ModelObjectForm: React.FC<AddObjectOrEditProps> = ({
 		const fieldDefinition = objectData?.fieldsAndTypes.find(
 			(f) => f.column_name === field,
 		);
-		console.log('Field Definition for', field, fieldDefinition?.data_type);
 		if (fieldDefinition) {
-			if (fieldDefinition.data_type === 'USER-DEFINED') {
+			if (fieldDefinition.data_type === 'enum') {
 				return 'select';
 			}
 			if (
@@ -680,13 +679,13 @@ const ModelObjectForm: React.FC<AddObjectOrEditProps> = ({
 			if (fieldDefinition.data_type === 'date') {
 				return 'date';
 			}
-			if (fieldDefinition.data_type.startsWith('timestamp')) {
+			if (fieldDefinition.data_type === 'datetime' || fieldDefinition.data_type.startsWith('timestamp')) {
 				return 'datetime';
 			}
 			if (fieldDefinition.data_type === 'boolean') {
 				return 'checkbox';
 			}
-			if (fieldDefinition.data_type === 'jsonb') {
+			if (fieldDefinition.data_type === 'json' || fieldDefinition.data_type === 'jsonb') {
 				return 'textarea';
 			}
 			if (fieldDefinition.data_type === 'ARRAY') {
@@ -752,10 +751,9 @@ const ModelObjectForm: React.FC<AddObjectOrEditProps> = ({
 			(f) => f.column_name === field,
 		);
 		if (fieldDefinition) {
-			if (fieldDefinition.data_type === 'USER-DEFINED') {
+			if (fieldDefinition.data_type === 'enum') {
 				// extract value from column_default: ie "'daily'::\"TimesheetFrequency\"" => "daily"
-				const match = fieldDefinition.column_default?.match(/'([^']+)'/);
-				return match ? match[1] : '';
+				return fieldDefinition.column_default || '';
 			}
 			if (
 				fieldDefinition.data_type === 'date' &&
@@ -1115,7 +1113,7 @@ const ModelObjectForm: React.FC<AddObjectOrEditProps> = ({
 										)}
 										{layoutTp === 'stacked' &&
 											getAllFieldNames()
-												.filter((f) => f !== 'id' && f !== '$pk')
+												.filter((f) => f !== objectData.pkFieldName && f !== '$pk')
 												.filter(
 													(f) =>
 														!extraConfig?.fields ||

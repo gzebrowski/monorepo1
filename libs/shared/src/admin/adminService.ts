@@ -127,9 +127,9 @@ export class AdminService {
             }
             listFilterFields = rebuiltListFilterFields;
         }
-        await Promise.all(fieldsAndTypes.filter(field => field.udt_name).map(async field => {
-            if (field.data_type === 'USER-DEFINED') {
-                filterTypes[field.column_name] = await modelInstance.getUserDefinedTypes(field.udt_name);
+        await Promise.all(fieldsAndTypes.map(async field => {
+            if (field.data_type === 'enum') {
+                filterTypes[field.column_name] = await modelInstance.getUserDefinedTypes(field.raw_type);
             } else if (withFilters) {
                 const foundRelation = relations.relations.find(rel => rel.from.dbField === field.column_name);
                 if (foundRelation && relFieldsToRetrieve.includes(foundRelation.from.dbField)) {
@@ -422,7 +422,7 @@ export class AdminService {
     extractFromExtraFields(extraFields: ExtraFieldDefinition[] | undefined) {
         const extraFieldAndTypes: GetPrismaModelFieldsAndTypes = [];
         const extraFilterTypes: Record<string, ListViewFilterType> = {};
-        const dataTypeMap: Record<string, string> = {json: 'jsonb', choice: 'USER-DEFINED', 'string': 'text'};
+        const dataTypeMap: Record<string, string> = {json: 'jsonb', choice: 'enum', 'string': 'text'};
         if (extraFields) {
             extraFields.forEach(field => {
                 const item: FieldDefinition = {
@@ -430,13 +430,14 @@ export class AdminService {
                     data_type: dataTypeMap[field.type] || field.type,
                     is_nullable: field.required ? 'NO' : 'YES',
                     column_default: field.default,
-                    udt_name: '',
+                    raw_type: field.type,
                     help_text: field.helpText,
+                    isPk: false,
                     character_maximum_length: null,
                 };
                 if (field.choices) {
                     extraFilterTypes[field.field] = field.choices as ListViewFilterType;
-                    item.data_type = 'USER-DEFINED';
+                    item.data_type = 'enum';
                 }
                 extraFieldAndTypes.push(item);
             });

@@ -12,6 +12,7 @@ import { ProjectSubCategoryAdmin } from "./models/projectsubcategory";
 import { TimeTrackingAdmin } from "./models/timetracking";
 
 import { AdminDefinitionMap } from "@simpleblog/shared/admin";
+import { VariousFieldsAdmin } from "./models/variousfields";
 
 const adminDefinitions: AdminDefinitionMap = {
   user: {cls: UserAdmin, name: UserAdmin.getPrismaModelPlural()},
@@ -26,6 +27,7 @@ const adminDefinitions: AdminDefinitionMap = {
   projectcategory: {cls: ProjectCategoryAdmin, name: ProjectCategoryAdmin.getPrismaModelPlural()},
   projectsubcategory: {cls: ProjectSubCategoryAdmin, name: ProjectSubCategoryAdmin.getPrismaModelPlural()},
   timetracking: {cls: TimeTrackingAdmin, name: TimeTrackingAdmin.getPrismaModelPlural()},
+  variousfields: {cls: VariousFieldsAdmin, name: VariousFieldsAdmin.getPrismaModelPlural()},
 };
 export default adminDefinitions;
 export {
@@ -41,4 +43,5 @@ export {
   ProjectCategoryAdmin,
   ProjectSubCategoryAdmin,
   TimeTrackingAdmin,
+  VariousFieldsAdmin,
 };
