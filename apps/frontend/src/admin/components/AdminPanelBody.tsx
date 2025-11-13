@@ -10,7 +10,7 @@ import {
 import {
 	ArrowUpZA,
 	ArrowDownAZ,
-} from 'lucide-react';
+} from './ui/icons';
 
 import { DataFilters } from './dataFilters';
 import Paginator from '../../components/paginator';

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { CalendarDays, PencilIcon, PlusIcon, X, ExternalLink } from 'lucide-react';
+import { PencilIcon, PlusIcon, X, ExternalLink } from './ui/icons';
 import { v4 as uuidv4 } from 'uuid';
 import {
 	Table,

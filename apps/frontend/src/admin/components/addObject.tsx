@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ModelObjectForm, SaveVariant } from './modelObjectForm';
 import { CommonPostResult, CommonReturnModelItemType } from '@simpleblog/shared/admin';
 import { ErrorData } from '../models';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle } from './ui/icons';
 
 type AddObjectProps = {
     model: string;

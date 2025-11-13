@@ -17,7 +17,7 @@ import {
 	Button,
 } from './ui/simpleComponents';
 import { AdminService } from '../services/admin.services';
-import { ChevronDown, PlusIcon, AlertTriangle } from 'lucide-react';
+import { ChevronDown, PlusIcon, AlertTriangle } from './ui/icons';
 import { ErrorData } from '../models';
 import { cn } from '../utils/utils';
 
