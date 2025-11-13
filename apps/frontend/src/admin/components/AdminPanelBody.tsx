@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button, Input, Switch } from './ui/simpleComponents';
 import { useToast } from '@/components/ui';
@@ -15,7 +15,6 @@ import {
 import { DataFilters } from './dataFilters';
 import Paginator from '../../components/paginator';
 import { AdminService } from '../services/admin.services';
-import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { GetModelItemsType, GetModelsType } from '@simpleblog/shared/admin';
 
 import { useAdminAlert } from '../context/adminAlerts';
@@ -96,18 +95,40 @@ const AdminPanelBody: React.FC = () => {
 
 	const [page, setPage] = useState(0);
 	const { confirmBox } = useAdminAlert();
-	const apiService = new AdminService();
-	const {
-		data: adminModels,
-	} = useQuery<GetModelsType>({
-		queryKey: ['adminModels'],
-		queryFn: async () => await apiService.getAllModels(),
-	});
-	const {
-		data: modelItems,
-	} = useQuery<GetModelItemsType>({
-		queryKey: ['modelItems'],
-		queryFn: async () => {
+	
+	// Data states
+	const [adminModels, setAdminModels] = useState<GetModelsType | null>(null);
+	const [modelItems, setModelItems] = useState<GetModelItemsType | null>(null);
+	const [isLoadingModels, setIsLoadingModels] = useState(false);
+	const [isLoadingItems, setIsLoadingItems] = useState(false);
+	const [_modelsError, setModelsError] = useState<string | null>(null);
+	const [_itemsError, setItemsError] = useState<string | null>(null);
+
+	const apiService = useMemo(() => new AdminService(), []);
+
+	// Load admin models
+	const loadAdminModels = useCallback(async () => {
+		if (isLoadingModels) return;
+		
+		setIsLoadingModels(true);
+		setModelsError(null);
+		try {
+			const result = await apiService.getAllModels();
+			setAdminModels(result);
+		} catch (error) {
+			setModelsError(error instanceof Error ? error.message : 'Failed to load models');
+		} finally {
+			setIsLoadingModels(false);
+		}
+	}, [apiService, isLoadingModels]);
+
+	// Load model items
+	const loadModelItems = useCallback(async () => {
+		if (!currentModel || isLoadingItems) return;
+		
+		setIsLoadingItems(true);
+		setItemsError(null);
+		try {
 			const filters: Record<string, any> = {};
 			if (reqSearchQuery) {
 				filters._q = reqSearchQuery;
@@ -122,23 +143,26 @@ const AdminPanelBody: React.FC = () => {
 					}
 				});
 			}
-			const result = await apiService.getModelItems(
-				currentModel,
-				page,
-				filters,
-			);
-			return result;
-		},
-		enabled: !!currentModel,
-	});
-	const queryClient = useQueryClient();
-	useEffect(() => {
-		if (currentModel && modelItems && modelItems.items) {
-			queryClient.invalidateQueries({
-				queryKey: ['modelItems'],
-			});
+			const result = await apiService.getModelItems(currentModel, page, filters);
+			setModelItems(result);
+		} catch (error) {
+			setItemsError(error instanceof Error ? error.message : 'Failed to load items');
+		} finally {
+			setIsLoadingItems(false);
 		}
-	}, [orderingIdx, reqSearchQuery, page, currentModel, filterByField]);
+	}, [apiService, currentModel, page, reqSearchQuery, orderingIdx, filterByField, isLoadingItems]);
+
+	// Load models on mount
+	useEffect(() => {
+		loadAdminModels();
+	}, [loadAdminModels]);
+
+	// Load items when dependencies change
+	useEffect(() => {
+		if (currentModel) {
+			loadModelItems();
+		}
+	}, [currentModel, page, reqSearchQuery, orderingIdx, filterByField, loadModelItems]);
 
 	useEffect(() => {
 		if (mode === 'reloadAdd' || mode === 'reloadEdit') {
@@ -146,34 +170,35 @@ const AdminPanelBody: React.FC = () => {
 		}
 	}, [mode]);
 
-	const deleteObject = async (itemId?: string) => {
+	const deleteObject = useCallback(async (itemId?: string) => {
 		if (itemId) {
 			await apiService.deleteObject(currentModel, itemId);
-			queryClient.invalidateQueries({
-				queryKey: ['modelItems'],
-			});
+			await loadModelItems();
 			navigate(`/admin/${currentModel}`);
 		}
-	};
-	const selectModel = (model: string) => {
+	}, [apiService, currentModel, loadModelItems, navigate]);
+	const selectModel = useCallback((model: string) => {
 		setFilterByField(null);
         navigate(`/admin/${model}`);
-	};
-	const changePage = (page: number) => {
+	}, [navigate]);
+	
+	const changePage = useCallback((page: number) => {
 		setPage(page);
-	};
-	const checkboxChecked = (id: string) => {
+	}, []);
+	
+	const checkboxChecked = useCallback((id: string) => {
 		return selectedItemsMap[id] || false;
-	};
-	const setEditMode = (itemId: string | null, md?: 'edit' | 'reloadEdit') => {
+	}, [selectedItemsMap]);
+	
+	const setEditMode = useCallback((itemId: string | null, md?: 'edit' | 'reloadEdit') => {
 		md = md || 'edit';
 		if (itemId) {
 			navigate(`/admin/${currentModel}/${itemId}`);
 		} else {
 			navigate(`/admin/${currentModel}`);
 		}
-	};
-	const changeSelectedState = (id: string | null, checked: boolean) => {
+	}, [navigate, currentModel]);
+	const changeSelectedState = useCallback((id: string | null, checked: boolean) => {
 		if (!id) {
 			setSelectedAll(checked);
 			setSelectedAny(checked);
@@ -203,10 +228,16 @@ const AdminPanelBody: React.FC = () => {
 				Object.values(currSelectedState).some((value) => value),
 		);
 		setSelectEverything(false);
-	};
-	const performActionMutation = useMutation({
-		mutationFn: async () => {
-			setActionError(null);
+	}, [modelItems?.items, selectedItemsMap]);
+	const [isPerformingAction, setIsPerformingAction] = useState(false);
+
+	const performActionMutation = useCallback(async () => {
+		if (isPerformingAction) return;
+		
+		setIsPerformingAction(true);
+		setActionError(null);
+		
+		try {
 			if (!currentModel || !currentAction || !selectedAny) {
 				throw new Error('Invalid action or model selected');
 			}
@@ -226,29 +257,36 @@ const AdminPanelBody: React.FC = () => {
 			);
 			if (response.status === 'error') {
 				setActionError(response.message);
+				return response;
 			}
-			return response;
-		},
-		onSuccess: () => {
-			const ids = Object.keys(selectedItemsMap).filter(
+
+			// Success handling
+			const selectedIds = Object.keys(selectedItemsMap).filter(
 				(key) => selectedItemsMap[key],
 			);
 			toast({
 				title: 'Action Successful',
-				description: `Action ${currentAction} performed successfully on ${ids.length} items.`,
+				description: `Action ${currentAction} performed successfully on ${selectedIds.length} items.`,
 			});
 			changeSelectedState(null, false);
-			queryClient.invalidateQueries({
-				queryKey: ['modelItems'],
-			});
-		},
-	});
-	const performAction = async () => {
+			
+			// Reload data
+			await loadModelItems();
+			
+			return response;
+		} catch (error) {
+			setActionError(error instanceof Error ? error.message : 'Action failed');
+			throw error;
+		} finally {
+			setIsPerformingAction(false);
+		}
+	}, [currentModel, currentAction, selectedAny, selectedAll, selectEverything, selectedItemsMap, apiService, toast, changeSelectedState, loadModelItems, isPerformingAction]);
+	const performAction = useCallback(async () => {
 		const action: ActionType | undefined = modelItems?.actions.find(
 			(action) => action.key === currentAction,
 		);
 		const doPerformAction = async () => {
-			await performActionMutation.mutateAsync();
+			await performActionMutation();
 		};
 		if (action) {
 			if (action.requiresConfirmation) {
@@ -270,8 +308,8 @@ const AdminPanelBody: React.FC = () => {
 				changeSelectedState(null, false);
 			}
 		}
-	};
-	const changeOrdering = (field: string, idx: number) => {
+	}, [modelItems?.actions, currentAction, performActionMutation, confirmBox, changeSelectedState]);
+	const changeOrdering = useCallback((_field: string, idx: number) => {
 		if (orderingIdx === null) {
 			setOrderingIdx(idx);
 		} else if (orderingIdx === idx || orderingIdx === -idx) {
@@ -279,8 +317,8 @@ const AdminPanelBody: React.FC = () => {
 		} else {
 			setOrderingIdx(idx);
 		}
-	};
-	const formatCellValue = (field: string, value: any) => {
+	}, [orderingIdx]);
+	const formatCellValue = useCallback((field: string, value: any) => {
 		if (value === null || value === undefined) {
 			return '-';
 		}
@@ -322,11 +360,8 @@ const AdminPanelBody: React.FC = () => {
 			return JSON.stringify(value);
 		}
 		return String(value);
-	};
-	const hasFieldDefinition = (field: string) => {
-		return modelItems?.fieldsAndTypes.some((f) => f.column_name === field);
-	};
-
+	}, [modelItems?.fieldsAndTypes]);
+	
 	if (mode === 'view') {
 		function getValueAndStyle(field: string, value: any): { fieldVal: any; valueStyle: any; } {
 			let fieldVal = formatCellValue(field, value);
@@ -542,7 +577,7 @@ const AdminPanelBody: React.FC = () => {
 									</TableHeader>
 									{modelItems.items.length > 0 ? (
 										<TableBody>
-											{modelItems.items.map((item: any, index: number) => (
+											{modelItems.items.map((item: any, _index: number) => (
 												<TableRow key={item.$pk}>
 													<TableCell>
 														<Checkbox
@@ -612,7 +647,7 @@ const AdminPanelBody: React.FC = () => {
 						itemId={editItemId}
 						canAddItem={modelItems?.canAddItem}
                         canDeleteItem={modelItems?.canDeleteItem}
-						onSave={(data, saveVariant) => {
+						onSave={async (_data, saveVariant) => {
                             let navigateUrl: string | null = null;
                             if (saveVariant === 'saveAndAddNew') {
 								navigateUrl = `/admin/${adminModel}/add`;
@@ -623,9 +658,7 @@ const AdminPanelBody: React.FC = () => {
 								navigateUrl = `/admin/${adminModel}`;
                                 setEditMode(null);
 							}
-							queryClient.invalidateQueries({
-								queryKey: ['modelItems'],
-							});
+							await loadModelItems();
                             if (navigateUrl) {
                                 navigate(navigateUrl);
                             }
@@ -649,7 +682,7 @@ const AdminPanelBody: React.FC = () => {
 				{currentModel && (
 					<AddObject
 						model={currentModel}
-						onSave={(data, saveVariant, newId) => {
+						onSave={async (_data, saveVariant, newId) => {
                             let navigateUrl: string | null = null;
 							if (saveVariant === 'saveAndAddNew') {
 								navigateUrl = `/admin/${adminModel}/addnew`;
@@ -661,9 +694,7 @@ const AdminPanelBody: React.FC = () => {
 								setEditMode(null);
                                 navigateUrl = `/admin/${adminModel}`;
 							}
-							queryClient.invalidateQueries({
-								queryKey: ['modelItems'],
-							});
+							await loadModelItems();
                             if (navigateUrl) {
                                 navigate(navigateUrl);
                             }
