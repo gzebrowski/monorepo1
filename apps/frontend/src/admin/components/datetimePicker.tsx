@@ -40,7 +40,7 @@ export function DatetimePicker({ value, onChange }: DatetimePickerProps) {
       {date && (
         <div className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
           <div className="flex items-center space-x-2">
-            <label className="text-sm font-medium text-gray-700">Godzina:</label>
+            <label className="text-sm font-medium text-gray-700">Hour:</label>
             <select
               value={hours}
               onChange={(e) => setHours(Number(e.target.value))}
@@ -55,7 +55,7 @@ export function DatetimePicker({ value, onChange }: DatetimePickerProps) {
           </div>
           
           <div className="flex items-center space-x-2">
-            <label className="text-sm font-medium text-gray-700">Minuta:</label>
+            <label className="text-sm font-medium text-gray-700">Min:</label>
             <select
               value={minutes}
               onChange={(e) => setMinutes(Number(e.target.value))}
@@ -78,13 +78,10 @@ export function DatetimePicker({ value, onChange }: DatetimePickerProps) {
               }}
               className="px-3 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
             >
-              Teraz
+              Now
             </button>
           </div>
           
-          <div className="text-sm text-gray-600 ml-4">
-            Wybrana data i godzina: {date.toLocaleString('pl-PL')}
-          </div>
         </div>
       )}
     </div>

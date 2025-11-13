@@ -142,6 +142,8 @@ function mapQuerysetResultWithSelectClause(
                 }
             }
         }
+        if (item['$pk'] === undefined) {
+        }
         return result;
     });
 }
@@ -336,6 +338,7 @@ export class BaseAdminModel {
         const selectClause = this.getSelectClause(this.ensureListDisplayFields());
         const filtersData = this.getFiltersClause(filters, this.searchFields);
         const orderingClause = await this.getOrderingClause(filters, this.ensureListDisplayFields());
+        const pkFieldName = this.findPkField();
         const queryset = await this.getBaseQset().findMany({
             where: filtersData,
             skip,
@@ -343,7 +346,14 @@ export class BaseAdminModel {
             select: {...selectClause, ...(extraFields || {})},
             orderBy: orderingClause,
         });
-        return mapQuerysetResultWithSelectClause(queryset, selectClause);
+        const result = mapQuerysetResultWithSelectClause(queryset, selectClause);
+        // add $pk field to every item
+        result.forEach(item => {
+            if (item['$pk'] === undefined) {
+                item['$pk'] = item[pkFieldName];
+            }
+        });
+        return result;
     }
     protected getSelectClause(fields: string[] = []) {
         const fieldNames = fields.map(fieldDef => {

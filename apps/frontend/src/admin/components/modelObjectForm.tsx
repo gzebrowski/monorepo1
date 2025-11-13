@@ -893,12 +893,12 @@ const ModelObjectForm: React.FC<AddObjectOrEditProps> = ({
 		}
 		const dataToCheck = dt || formData;
 		return getAllFieldNames().every((field) => {
-			if (field === 'id') {
-				return true;
-			}
 			const fieldDef = objectData?.fieldsAndTypes.find(
 				(f) => f.column_name === field,
 			);
+			if (fieldDef?.isPk) {
+				return true;
+			}
 			if (isFieldRequired(fieldDef)) {
 				const value = dataToCheck[field];
 				if (getFieldType(field) === 'checkbox') {

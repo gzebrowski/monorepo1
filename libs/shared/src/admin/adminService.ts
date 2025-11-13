@@ -204,6 +204,7 @@ export class AdminService {
             model,
             total,
             filters,
+            pkFieldName: modelInstance.findPkField(),
             fieldsAndTypes: fieldsAndTypes as GetPrismaModelFieldsAndTypes,
             listDisplayFields: listDisplayFields as GetListDisplayFieldsType,
             listFilterFields: listFilterFields as GetListFilterFieldsType,

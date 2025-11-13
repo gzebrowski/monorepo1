@@ -180,7 +180,7 @@ const AdminPanelBody: React.FC = () => {
 			setSelectedItemsMap((prev) => {
 				const newMap = { ...prev };
 				modelItems?.items.forEach((item) => {
-					newMap[item.id] = checked === true ? true : false;
+					newMap[item.$pk] = checked === true ? true : false;
 				});
 				return newMap;
 			});
@@ -518,7 +518,7 @@ const AdminPanelBody: React.FC = () => {
 														parseFieldName(fieldDef);
 													return (
 														<TableHead key={field}>
-															{field !== 'id' ? (
+															{field !== modelItems.pkFieldName ? (
 																<Button
 																	variant="link"
 																	onClick={() => {
@@ -543,12 +543,12 @@ const AdminPanelBody: React.FC = () => {
 									{modelItems.items.length > 0 ? (
 										<TableBody>
 											{modelItems.items.map((item: any, index: number) => (
-												<TableRow key={item.id}>
+												<TableRow key={item.$pk}>
 													<TableCell>
 														<Checkbox
-															checked={checkboxChecked(item.id)}
+															checked={checkboxChecked(item.$pk)}
 															onCheckedChange={(checked) => {
-																changeSelectedState(item.id, checked === true);
+																changeSelectedState(item.$pk, checked === true);
 															}}
 														/>
 													</TableCell>
@@ -559,14 +559,14 @@ const AdminPanelBody: React.FC = () => {
 																return (
 																	<>
 																		{index2 ? (
-																			<TableCell key={item.id + '__' + field} style={valueStyle}>
+																			<TableCell key={item.$pk + '__' + field} style={valueStyle}>
 																				{fieldVal}
 																			</TableCell>
 																		) : (
-																			<TableCell key={item.id + '__' + field}>
+																			<TableCell key={item.$pk + '__' + field}>
 																				<Button
 																					style={valueStyle}
-																					onClick={() => setEditMode(item.id)}
+																					onClick={() => setEditMode(item.$pk)}
 																					variant="link"
 																					title={item[field].toString()}>
 																					{fieldVal}
