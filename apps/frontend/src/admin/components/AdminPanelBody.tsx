@@ -371,10 +371,6 @@ const AdminPanelBody: React.FC = () => {
 				valueStyle = { paddingLeft: `${startPadding || 0}em` };
 			}
 
-			if (field === 'status') {
-				valueStyle = { color: value === 'active' ? 'green' : 'red' };
-			}
-
 			return { fieldVal, valueStyle };
 		}
 

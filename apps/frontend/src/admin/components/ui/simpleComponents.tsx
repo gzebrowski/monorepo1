@@ -647,7 +647,7 @@ export const AlertDialogTrigger = forwardRef<HTMLButtonElement, ButtonHTMLAttrib
     const context = React.useContext(AlertDialogContext);
     
     return (
-      <button
+      <Button
         ref={ref}
         onClick={(e) => {
           context?.setOpen(true);
@@ -656,7 +656,7 @@ export const AlertDialogTrigger = forwardRef<HTMLButtonElement, ButtonHTMLAttrib
         {...props}
       >
         {children}
-      </button>
+      </Button>
     );
   }
 );
@@ -669,7 +669,7 @@ export const AlertDialogContent = forwardRef<HTMLDivElement, HTMLAttributes<HTML
     if (!context?.open) return null;
 
     return (
-      <div className="admin-fixed admin-inset-0 admin-z-50 admin-flex admin-items-center admin-justify-center">
+      <div className="admin-dialog admin-fixed admin-inset-0 admin-z-50 admin-flex admin-items-center admin-justify-center">
         {/* Backdrop */}
         <div 
           className="admin-fixed admin-inset-0 admin-bg-black-50"
@@ -680,7 +680,7 @@ export const AlertDialogContent = forwardRef<HTMLDivElement, HTMLAttributes<HTML
         <div
           ref={ref}
           className={cn(
-            "admin-relative admin-z-50 admin-grid admin-w-full admin-max-w-lg admin-gap-4 admin-border admin-bg-background admin-p-6 admin-shadow-lg admin-animate-in admin-fade-in-0 admin-zoom-in-95 admin-rounded-lg",
+            "admin-dialog-content admin-relative admin-z-50 admin-grid admin-w-full admin-max-w-lg admin-gap-4 admin-border admin-bg-background admin-p-6 admin-shadow-lg admin-rounded-lg",
             className
           )}
           {...props}
@@ -730,7 +730,7 @@ export const AlertDialogFooter = forwardRef<HTMLDivElement, HTMLAttributes<HTMLD
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn("admin-flex admin-flex-col-reverse admin-justify-end admin-gap-2", className)}
+      className={cn("admin-flex admin-justify-end admin-gap-2", className)}
       {...props}
     />
   )
@@ -746,9 +746,10 @@ export const AlertDialogAction = forwardRef<HTMLButtonElement, AlertDialogAction
     const context = React.useContext(AlertDialogContext);
     
     return (
-      <button
+      <Button
         ref={ref}
         disabled={disabled}
+        variant='primary'
         onClick={(e) => {
           if (!disabled) {
             onClick?.(e);
@@ -756,13 +757,13 @@ export const AlertDialogAction = forwardRef<HTMLButtonElement, AlertDialogAction
           }
         }}
         className={cn(
-          'admin-inline-flex admin-h-10 admin-items-center admin-justify-center admin-rounded-md admin-bg-red-600 admin-px-4 admin-py-2 admin-text-sm admin-font-semibold admin-text-white admin-transition-colors admin-focus-visible:outline-none admin-disabled:cursor-not-allowed admin-disabled:opacity-50',
+          'admin-btn admin-btn-primary',
           className
         )}
         {...props}
       >
         {children}
-      </button>
+      </Button>
     );
   }
 );
@@ -775,20 +776,21 @@ export const AlertDialogCancel = forwardRef<HTMLButtonElement, AlertDialogCancel
     const context = React.useContext(AlertDialogContext);
     
     return (
-      <button
+      <Button
         ref={ref}
+        variant='secondary'
         onClick={(e) => {
           onClick?.(e);
           context?.setOpen(false);
         }}
         className={cn(
-          'admin-inline-flex admin-h-10 admin-items-center admin-justify-center admin-rounded-md admin-border admin-bg-background admin-px-4 admin-py-2 admin-text-sm admin-font-medium admin-transition-colors admin-hover:bg-accent admin-hover:text-accent-foreground admin-focus-visible:outline-none',
+          'admin-btn admin-btn-secondary',
           className
         )}
         {...props}
       >
         {children}
-      </button>
+      </Button>
     );
   }
 );

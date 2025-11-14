@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 
 import { Calendar } from './calendar';
+import { Button } from './ui/simpleComponents';
 
 type DatetimePickerProps = {
   value?: Date | null;
@@ -38,7 +39,7 @@ export function DatetimePicker({ value, onChange }: DatetimePickerProps) {
       <Calendar date={date} onDateChange={setDate} />
       
       {date && (
-        <div className="admin-flex admin-items-center admin-gap-4 admin-p-3 admin-bg-gray-50 admin-rounded-lg">
+        <div className="admin-flex admin-items-center admin-gap-4 admin-p-3 admin-light-background-color admin-rounded-lg">
           <div className="admin-flex admin-items-center admin-gap-2">
             <label className="admin-text-sm admin-font-medium">Hour:</label>
             <select
@@ -70,7 +71,8 @@ export function DatetimePicker({ value, onChange }: DatetimePickerProps) {
           </div>
           
           <div className="admin-flex admin-items-center admin-gap-2">
-            <button
+            <Button
+              variant='link'
               onClick={() => {
                 const now = new Date();
                 setHours(now.getHours());
@@ -79,7 +81,7 @@ export function DatetimePicker({ value, onChange }: DatetimePickerProps) {
               className="admin-px-3 admin-py-1 admin-text-xs admin-bg-primary admin-text-white admin-rounded admin-transition-colors"
             >
               Now
-            </button>
+            </Button>
           </div>
           
         </div>

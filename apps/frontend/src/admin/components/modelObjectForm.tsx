@@ -36,7 +36,8 @@ import {
 	InlineDefinition,
 } from '@simpleblog/shared/admin';
 
-import { useAlert } from '@/common/contexts/alerts';
+import { useAdminAlert } from '../context/adminAlerts';
+
 import { LoadingSpinner } from './loadingSpinner';
 
 export type SaveVariant = 'save' | 'saveAndAddNew' | 'saveAndStay';
@@ -540,7 +541,7 @@ const ModelObjectForm: React.FC<AddObjectOrEditProps> = ({
 
 	const apiService = new AdminService();
 	
-	const { confirmBox } = useAlert();
+	const { confirmBox } = useAdminAlert();
 	useEffect(() => {
 		const result = objectData;
 		if (!result) return;

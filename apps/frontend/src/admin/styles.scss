@@ -25,44 +25,47 @@ $admin-font-size-lg: 1.125rem;
 $admin-font-size-xl: 1.25rem;
 
 :root {
-  --admin-background-color: #FFFFFF;    
-  --admin-foreground-color: #1f2937;
-  --admin-light-color: #f9fafb;
-  --admin-muted-foreground-color: #6b7280;
-  --admin-card-foreground-color: #1f2937;
-  --admin-border-color: #e5e7eb;
-  --admin-box-shadow-color: rgba(0, 0, 0, 0.1);
-  --admin-ring-color: rgba(59, 130, 246, 0.5);
-  --admin-hover-background-color: #f8fafc;
-  --admin-selected-background-color: #eff6ff;
-  --admin-alert-background-color: #f0f9ff;
-  --admin-card-background-color: #ffffff;
-  --admin-input-background-color: #f9fafb;
+    --admin-background-color: #FFFFFF;    
+    --admin-foreground-color: #1f2937;
+    --admin-light-background-color: #f9fafb;
+    --admin-contrast-background-color: #eee;
+    --admin-muted-foreground-color: #6b7280;
+    --admin-card-foreground-color: #1f2937;
+    --admin-border-color: #e5e7eb;
+    --admin-box-shadow-color: rgba(0, 0, 0, 0.1);
+    --admin-ring-color: rgba(59, 130, 246, 0.5);
+    --admin-hover-background-color: #f8fafc;
+    --admin-selected-background-color: #eff6ff;
+    --admin-alert-background-color: #f0f9ff;
+    --admin-card-background-color: #ffffff;
+    --admin-input-background-color: #f9fafb;
     --admin-input-foreground-color: #1f2937;
     --admin-input-disabled-foreground-color: #9ca3af;
     --admin-input-disabled-background-color: #e5e7eb;
     --admin-input-border-color: #d1d5db;
     --admin-link-color: #1e40af;
     --admin-link-color-lighten: color.adjust(#1e40af, $lightness: -10%);
+    --admin-dialog-background-color: #f0f0f0;
 
-  --admin-primary-color: #1e40af;
-  --admin-primary-color-lighten: color.adjust(#1e40af, $lightness: -10%);
-  --admin-secondary-color: #64748b;
-  --admin-secondary-color-lighten: color.adjust(#64748b, $lightness: -10%);
-  --admin-success-color: #16a34a;
+    --admin-primary-color: #1e40af;
+    --admin-primary-color-lighten: color.adjust(#1e40af, $lightness: -10%);
+    --admin-secondary-color: #64748b;
+    --admin-secondary-color-lighten: color.adjust(#64748b, $lightness: -10%);
+    --admin-success-color: #16a34a;
     --admin-success-color-lighten: color.adjust(#16a34a, $lightness: -10%);
-  --admin-warning-color: #ca8a04;
+    --admin-warning-color: #ca8a04;
     --admin-warning-color-lighten: color.adjust(#ca8a04, $lightness: -10%);
-  --admin-danger-color: #dc2626;
+    --admin-danger-color: #dc2626;
     --admin-danger-color-lighten: color.adjust(#dc2626, $lightness: -10%);
-  --admin-info-color: #0891b2;
+    --admin-info-color: #0891b2;
     --admin-info-color-lighten: color.adjust(#0891b2, $lightness: -10%);
 }
 @media (prefers-color-scheme: dark) {
     :root {
-      --admin-background-color: #0f172a;
-      --admin-foreground-color: #f1f5f9;
-        --admin-light-color: #1e293b;
+        --admin-background-color: #0f172a;
+        --admin-foreground-color: #f1f5f9;
+        --admin-light-background-color: #1e293b;
+        --admin-contrast-background-color: #333;
         --admin-muted-foreground-color: #9ca3af;
         --admin-card-foreground-color: #f1f5f9;
         --admin-border-color: #334155;
@@ -79,19 +82,20 @@ $admin-font-size-xl: 1.25rem;
         --admin-input-border-color: #475569;
         --admin-link-color: #AAAAFF;
         --admin-link-color-lighten: color.adjust(#AAAAFF, $lightness: -10%);
+        --admin-dialog-background-color: #1f1f1f;
 
-      --admin-primary-color: #3b82f6;
-      --admin-primary-color-lighten: color.adjust(#3b82f6, $lightness: -10%);
-      --admin-secondary-color: #94a3b8;
+        --admin-primary-color: #3b82f6;
+        --admin-primary-color-lighten: color.adjust(#3b82f6, $lightness: -10%);
+        --admin-secondary-color: #94a3b8;
         --admin-secondary-color-lighten: color.adjust(#94a3b8, $lightness: -10%);
 
-      --admin-success-color: #22c55e;
+        --admin-success-color: #22c55e;
         --admin-success-color-lighten: color.adjust(#22c55e, $lightness: -10%);
-      --admin-warning-color: #eab308;
+        --admin-warning-color: #eab308;
         --admin-warning-color-lighten: color.adjust(#eab308, $lightness: -10%);
-      --admin-danger-color: #ef4444;
+        --admin-danger-color: #ef4444;
         --admin-danger-color-lighten: color.adjust(#ef4444, $lightness: -10%);
-      --admin-info-color: #06b6d4;
+        --admin-info-color: #06b6d4;
         --admin-info-color-lighten: color.adjust(#06b6d4, $lightness: -10%);
     }
 }
@@ -123,7 +127,7 @@ $admin-font-size-xl: 1.25rem;
 .admin-w-fit { width: fit-content; }
 .admin-h-fit { height: fit-content; }
 .admin-w-4 { width: 1rem; }
-.admin-h-4 { width: 1rem; }
+.admin-h-4 { height: 1rem; }
 .admin-w-5 { width: 1.25rem; }
 .admin-h-5 { height: 1.25rem; }
 .admin-w-6 { width: 1.5rem; }
@@ -206,6 +210,9 @@ $admin-font-size-xl: 1.25rem;
 .admin-bg-yellow-50 { background-color: #fffbeb; }
 .admin-bg-green-50 { background-color: #f0fdf4; }
 .admin-bg-black-50 { background-color: rgba(0, 0, 0, 0.5); }
+.admin-light-background-color { background-color: var(--admin-light-background-color); }
+.admin-contrast-background-color { background-color: var(--admin-contrast-background-color); }
+
 
 .admin-text-foreground { color: var(--admin-foreground-color); }
 .admin-text-muted-foreground { color: var(--admin-muted-foreground-color); }
@@ -417,6 +424,7 @@ $admin-font-size-xl: 1.25rem;
 // Admin Panel Container
 // ---------------------
 .admin-panel {
+  
   min-height: 100vh;
   background-color: var(--admin-background-color);
   color: var(--admin-foreground-color);
@@ -436,6 +444,13 @@ $admin-font-size-xl: 1.25rem;
   select {
     @include admin-input;
 
+  }
+  .admin-dialog .admin-dialog-content {
+    background-color: var(--admin-dialog-background-color);
+    border-radius: $admin-border-radius;
+    border-color: var(--admin-border-color);
+
+    box-shadow: 0 10px 15px -3px var(--admin-box-shadow-color), 0 4px 6px -2px var(--admin-box-shadow-color);
   }
   .admin-table {
     @include admin-card;
