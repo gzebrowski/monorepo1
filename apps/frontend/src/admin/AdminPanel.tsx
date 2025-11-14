@@ -1,12 +1,14 @@
-import React from 'react';
+import './styles.scss';
 
 import AdminPanelBody from './components/AdminPanelBody';
 import { AdminAlertProvider } from './context/adminAlerts';
 
 export function AdminPanel() {
     return (
-        <AdminAlertProvider>
-            <AdminPanelBody />
-        </AdminAlertProvider>
+        <div className="admin-panel">
+            <AdminAlertProvider>
+                <AdminPanelBody />
+            </AdminAlertProvider>
+        </div>
     );
 }
