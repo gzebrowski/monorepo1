@@ -72,7 +72,7 @@ export class AdminService {
         listFilterFields: GetListFilterFieldsType,
         inlines: any[] | undefined
     }> {
-        const fieldsAndTypes = await modelInstance.getPrismaModelFieldsAndTypes() as GetPrismaModelFieldsAndTypes;
+        const fieldsAndTypes = modelInstance.updateFilteredFieldAndTypes(await modelInstance.getPrismaModelFieldsAndTypes()) as GetPrismaModelFieldsAndTypes;
         const filterTypes: Record<string, ListViewFilterType> = {};
         let listFilterFields = [] as GetListFilterFieldsType;
         const relations = await modelInstance.getOneToOneRelationsFromDMMF() as GetOneToOneRelationsFromDMMF;
@@ -322,8 +322,10 @@ export class AdminService {
         const excludes = await modelInstance.getExcludeFields() || [];
         const onlyFields = modelInstance?.fields?.length ? modelInstance.fields : undefined;
         excludes.push(...((params?.['exclude'] as string | undefined) || '').split(',').map(field => field.trim()).filter(field => field !== ''));
-        const filteredFieldAndTypes = fieldsAndTypes.filter(field => !excludes.includes(field.column_name)).filter(field => (!onlyFields || onlyFields.includes(field.column_name)));
-        console.warn('prismaModel', modelInstance.prismaModel, modelInstance.getFieldDependencies(), modelInstance.fieldDependencies);
+        const filteredFieldAndTypes = modelInstance.updateFilteredFieldAndTypes(
+            fieldsAndTypes.filter(field => !excludes.includes(field.column_name)).filter(field => (!onlyFields || onlyFields.includes(field.column_name)))
+        );
+        
         const extraFields = await modelInstance.getExtraFields(req) as ExtraFieldDefinition[] | undefined;
         const { extraFieldAndTypes, extraFilterTypes } = this.extractFromExtraFields(extraFields);
         return {

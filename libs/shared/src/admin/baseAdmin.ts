@@ -903,7 +903,15 @@ export class BaseAdminModel {
         // Prepare data for update
         return data;
     }
-
+    protected updateFilteredFieldAndType(filteredFieldAndType: FieldDefinition): FieldDefinition {
+        // Can be overridden to modify filtered fields and types
+        return filteredFieldAndType;
+    }
+    
+    protected updateFilteredFieldAndTypes(filteredFieldAndTypes: FieldDefinition[]): FieldDefinition[] {
+        // Can be overridden to modify filtered fields and types
+        return filteredFieldAndTypes.map(f => this.updateFilteredFieldAndType(f));
+    }
     async _do_update(id: string | number, data: Record<string, any>) {
         const model = this.getPrismaModel();
         const [pkName, pkVal] = this.parseIdValue(id.toString());

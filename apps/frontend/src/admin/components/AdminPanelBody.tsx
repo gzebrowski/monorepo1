@@ -13,7 +13,7 @@ import {
 } from './ui/icons';
 
 import { DataFilters } from './dataFilters';
-import Paginator from '../../components/paginator';
+import Paginator from './paginator';
 import { AdminService } from '../services/admin.services';
 import { GetModelItemsType, GetModelsType } from '@simpleblog/shared/admin';
 
