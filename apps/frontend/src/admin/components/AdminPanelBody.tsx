@@ -120,7 +120,7 @@ const AdminPanelBody: React.FC = () => {
 		} finally {
 			setIsLoadingModels(false);
 		}
-	}, [apiService, isLoadingModels]);
+	}, [apiService]);
 
 	// Load model items
 	const loadModelItems = useCallback(async () => {
@@ -150,7 +150,7 @@ const AdminPanelBody: React.FC = () => {
 		} finally {
 			setIsLoadingItems(false);
 		}
-	}, [apiService, currentModel, page, reqSearchQuery, orderingIdx, filterByField, isLoadingItems]);
+	}, [apiService, currentModel, page, reqSearchQuery, orderingIdx, filterByField]);
 
 	// Load models on mount
 	useEffect(() => {
@@ -388,7 +388,7 @@ const AdminPanelBody: React.FC = () => {
 				<div>
 					{adminModels && (
 						<div className="mb-4">
-							<h2 className="text-lg font-semibold mb-2">Admin Models</h2>
+							<h2 className="admin-text-lg admin-font-semibold admin-mb-2">Admin Models</h2>
 							<div className="space-y-1">
 								{Object.entries(adminModels).map(([key, model]) => (
 									<div key={key} className="mr-1 inline-block">
@@ -410,14 +410,14 @@ const AdminPanelBody: React.FC = () => {
 										<strong>{currentModel.toUpperCase()}</strong>: Showing{' '}
 										{modelItems.itemsCount} of {modelItems.total} items
 									</p>
-									<div className="mb-4 flex">
+									<div className="admin-mb-4 admin-flex">
 										{modelItems.searchFields?.length > 0 && (
-											<div className="flex search-box mr-4">
-												<div className="flex items-center">
-													<div className="flex box-label items-center mr-2">
+											<div className="admin-flex search-box admin-mr-4">
+												<div className="admin-flex admin-items-center">
+													<div className="admin-flex box-label admin-items-center admin-mr-2">
 														Search:
 													</div>
-													<div className="flex box-ctrl items-center">
+													<div className="admin-flex box-ctrl admin-items-center">
 														<Input
 															type="text"
 															placeholder="Search..."
@@ -425,10 +425,10 @@ const AdminPanelBody: React.FC = () => {
 															onChange={(e) => {
 																setSearchQuery(e.target.value);
 															}}
-															className="input input-bordered w-full max-w-xs"
+															className="admin-w-full admin-max-w-xs admin-border admin-px-3 admin-py-2 admin-rounded-md"
 														/>
 													</div>
-													<div className="flex box-btn items-center ml-2">
+													<div className="admin-flex box-btn admin-items-center admin-ml-2">
 														<Button
 															onClick={() => {
 																setReqSearchQuery(searchQuery);
@@ -449,7 +449,7 @@ const AdminPanelBody: React.FC = () => {
 												<div className="flex action-ctrl items-center mr-2">
 													<select
 														value={currentAction}
-														className='p-1'
+														className='admin-p-1'
 														name="actions"
 														required={false}
 														onChange={(e) => {
@@ -468,7 +468,7 @@ const AdminPanelBody: React.FC = () => {
 															))}
 													</select>
 												</div>
-												<div className="flex action-btn items-center">
+												<div className="admin-flex action-btn admin-items-center">
 													<Button
 														disabled={!currentAction || !selectedAny}
 														onClick={() => {
@@ -484,9 +484,9 @@ const AdminPanelBody: React.FC = () => {
 											modelItems.actions.length > 0 &&
 											modelItems.total > modelItems.itemsCount &&
 											modelItems.itemsCount >= 100 && (
-												<div className="flex action-box">
-													<div className="flex action-ctrl-label items-center">
-														<div className="flex box-label items-center mr-2">
+												<div className="admin-flex action-box">
+													<div className="admin-flex action-ctrl-label admin-items-center">
+														<div className="admin-flex box-label admin-items-center admin-mr-2">
 															<Switch
 																checked={selectEverything}
 																onCheckedChange={setSelectEverything}
@@ -500,9 +500,9 @@ const AdminPanelBody: React.FC = () => {
                             icon on the right side of the header with filter icon and opening a dialog with filter options using Sheet component
                             */}
 										{modelItems.canAddItem && (
-											<div className="flex action-box">
-												<div className="flex action-ctrl-label items-center">
-													<div className="flex box-label items-center mx-2">
+										<div className="admin-flex action-box">
+											<div className="admin-flex action-ctrl-label admin-items-center">
+												<div className="admin-flex box-label admin-items-center admin-mx-2">
 														<Button
 															variant="primary"
 															onClick={() => {
@@ -517,7 +517,7 @@ const AdminPanelBody: React.FC = () => {
 										)}
 										{modelItems.listFilterFields &&
 											modelItems.listFilterFields.length > 0 && (
-												<div className="flex justify-end">
+												<div className="admin-flex admin-justify-end">
 													<DataFilters
                                                         model={currentModel}
 														modelItems={modelItems}

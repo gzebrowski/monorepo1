@@ -46,7 +46,7 @@ const EditObject: React.FC<EditObjectProps> = ({
 	onCancel,
 	onError,
     onDelete,
-	canAddItem,
+	canAddItem: _canAddItem,
 	onRedirect,
     canDeleteItem,
 }) => {
@@ -293,19 +293,19 @@ const EditObject: React.FC<EditObjectProps> = ({
 																	layoutType={inline.mode || 'auto'}
 																	itemId={id}
 																	inlineMode={true}
-																	onDelete={async (model, itemId, idx) => {
+																	onDelete={async (model, itemId, _idx) => {
 																		await apiService.deleteObject(
 																			model,
 																			itemId,
 																		);
 																		changeNewInlinesData(newInlinesData, true);
 																	}}
-																	onInlineUpdate={(
-																		inlitemId,
-																		inlIdx,
-																		isValid,
-																		inlData,
-																	) => {
+																onInlineUpdate={(
+																	inlitemId,
+																	_inlIdx,
+																	isValid,
+																	inlData,
+																) => {
 																		const newExistingData = (
 																			existingInlinesData[inline.model] || []
 																		).filter((item) => item.id !== inlitemId);
@@ -338,7 +338,7 @@ const EditObject: React.FC<EditObjectProps> = ({
 																	extraConfig={{ ...inline }}
 																	layoutType={inline.mode || 'auto'}
 																	inlineMode={true}
-																	onDelete={(model, itemId, idx) => {
+																	onDelete={(_model, _itemId, idx) => {
 																		const replaceNewInlinesData = {
 																			...newInlinesData,
 																			[inline.model]: newInlinesData[
@@ -350,12 +350,12 @@ const EditObject: React.FC<EditObjectProps> = ({
 																			true,
 																		);
 																	}}
-																	onInlineUpdate={(
-																		inlitemId,
-																		inlIdx,
-																		isValid,
-																		inlData,
-																	) => {
+																onInlineUpdate={(
+																	_inlitemId,
+																	inlIdx,
+																	isValid,
+																	inlData,
+																) => {
 																		const replaceNewInlinesData = {
 																			...newInlinesData,
 																			[inline.model]: newInlinesData[

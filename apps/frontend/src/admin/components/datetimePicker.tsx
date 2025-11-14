@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 import { Calendar } from './calendar';
 
@@ -31,16 +31,16 @@ export function DatetimePicker({ value, onChange }: DatetimePickerProps) {
       setHours(0);
       setMinutes(0);
     }
-  }, [value]);
+  }, []);
 
   return (
     <div className="space-y-4">
       <Calendar date={date} onDateChange={setDate} />
       
       {date && (
-        <div className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
-          <div className="flex items-center space-x-2">
-            <label className="text-sm font-medium text-gray-700">Hour:</label>
+        <div className="admin-flex admin-items-center admin-gap-4 admin-p-3 admin-bg-gray-50 admin-rounded-lg">
+          <div className="admin-flex admin-items-center admin-gap-2">
+            <label className="admin-text-sm admin-font-medium">Hour:</label>
             <select
               value={hours}
               onChange={(e) => setHours(Number(e.target.value))}
@@ -54,12 +54,12 @@ export function DatetimePicker({ value, onChange }: DatetimePickerProps) {
             </select>
           </div>
           
-          <div className="flex items-center space-x-2">
-            <label className="text-sm font-medium text-gray-700">Min:</label>
+          <div className="admin-flex admin-items-center admin-gap-2">
+            <label className="admin-text-sm admin-font-medium">Min:</label>
             <select
               value={minutes}
               onChange={(e) => setMinutes(Number(e.target.value))}
-              className="px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="admin-px-2 admin-py-1 admin-border admin-rounded admin-focus-visible:outline-none"
             >
               {Array.from({ length: 60 }, (_, i) => (
                 <option key={i} value={i}>
@@ -69,14 +69,14 @@ export function DatetimePicker({ value, onChange }: DatetimePickerProps) {
             </select>
           </div>
           
-          <div className="flex items-center space-x-2">
+          <div className="admin-flex admin-items-center admin-gap-2">
             <button
               onClick={() => {
                 const now = new Date();
                 setHours(now.getHours());
                 setMinutes(now.getMinutes());
               }}
-              className="px-3 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+              className="admin-px-3 admin-py-1 admin-text-xs admin-bg-primary admin-text-white admin-rounded admin-transition-colors"
             >
               Now
             </button>

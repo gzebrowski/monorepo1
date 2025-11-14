@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ModelObjectForm, SaveVariant } from './modelObjectForm';
-import { CommonPostResult, CommonReturnModelItemType } from '@simpleblog/shared/admin';
+import { CommonPostResult } from '@simpleblog/shared/admin';
 import { ErrorData } from '../models';
 import { AlertTriangle } from './ui/icons';
 
@@ -12,7 +12,7 @@ type AddObjectProps = {
 };
 
 const AddObject: React.FC<AddObjectProps> = ({ model, onSave, onCancel, onError }) => {
-    const [modelData, setModelData] = useState<CommonReturnModelItemType | null>(null);
+    // const [modelData, setModelData] = useState<CommonReturnModelItemType | null>(null); // unused
     const [errorData, setErrorData] = useState<ErrorData>({ message: null, main: {}, inlines: {} });
 
     function onSaveError(error: CommonPostResult): void {
@@ -36,8 +36,8 @@ const AddObject: React.FC<AddObjectProps> = ({ model, onSave, onCancel, onError 
     return (
         <div>
         { errorData.message && (
-            <div className="text-center border border-red-500 p-2 mb-2">
-                <div className="text-red-500 inline-flex items-center mt-2 font-bold">
+            <div className="admin-text-center admin-border admin-p-2 admin-mb-2" style={{ borderColor: '#dc2626' }}>
+                <div className="admin-text-red-600 admin-inline-flex admin-items-center admin-mt-2 admin-font-bold">
                     <AlertTriangle className="mr-2" />
                     <span className="">{errorData.message}</span>
                 </div>
@@ -51,7 +51,7 @@ const AddObject: React.FC<AddObjectProps> = ({ model, onSave, onCancel, onError 
             onSaveError={onSaveError}
             onCancel={onCancel}
             onError={onError}
-            onModelRetrieve={setModelData}
+            onModelRetrieve={() => {}}
         />
         </div>
     )

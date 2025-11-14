@@ -6,7 +6,7 @@ export const Table = forwardRef<HTMLTableElement, HTMLAttributes<HTMLTableElemen
   ({ className, ...props }, ref) => (
     <table
       ref={ref}
-      className={cn("w-full caption-bottom text-sm", className)}
+      className={cn("admin-w-full admin-text-sm", className)}
       {...props}
     />
   )
@@ -15,7 +15,7 @@ Table.displayName = "Table";
 
 export const TableHeader = forwardRef<HTMLTableSectionElement, HTMLAttributes<HTMLTableSectionElement>>(
   ({ className, ...props }, ref) => (
-    <thead ref={ref} className={cn("[&_tr]:border-b", className)} {...props} />
+    <thead ref={ref} className={cn("admin-table-header", className)} {...props} />
   )
 );
 TableHeader.displayName = "TableHeader";
@@ -24,7 +24,7 @@ export const TableBody = forwardRef<HTMLTableSectionElement, HTMLAttributes<HTML
   ({ className, ...props }, ref) => (
     <tbody
       ref={ref}
-      className={cn("[&_tr:last-child]:border-0", className)}
+      className={cn("admin-table-body", className)}
       {...props}
     />
   )
@@ -36,7 +36,7 @@ export const TableRow = forwardRef<HTMLTableRowElement, HTMLAttributes<HTMLTable
     <tr
       ref={ref}
       className={cn(
-        "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
+        "admin-border-b admin-transition-colors admin-hover:bg-muted-50",
         className
       )}
       {...props}
@@ -50,7 +50,7 @@ export const TableHead = forwardRef<HTMLTableCellElement, HTMLAttributes<HTMLTab
     <th
       ref={ref}
       className={cn(
-        "h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0",
+        "admin-h-12 admin-px-4 admin-text-left admin-align-middle admin-font-medium admin-text-muted-foreground",
         className
       )}
       {...props}
@@ -68,7 +68,7 @@ export const TableCell = forwardRef<HTMLTableCellElement, TableCellProps>(
     <td
       ref={ref}
       colSpan={colSpan}
-      className={cn("p-4 align-middle [&:has([role=checkbox])]:pr-0", className)}
+      className={cn("admin-p-4 admin-align-middle", className)}
       {...props}
     />
   )
@@ -80,7 +80,8 @@ export const Separator = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElemen
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn("shrink-0 bg-border h-[1px] w-full", className)}
+      className={cn("admin-shrink-0 admin-border admin-w-full", className)}
+      style={{ height: '1px' }}
       {...props}
     />
   )
@@ -93,7 +94,7 @@ export const Card = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
     <div
       ref={ref}
       className={cn(
-        "rounded-lg border bg-card text-card-foreground shadow-sm",
+        "admin-rounded-lg admin-border admin-bg-card admin-text-card-foreground admin-shadow-sm",
         className
       )}
       {...props}
@@ -107,7 +108,7 @@ export const CardTitle = forwardRef<HTMLParagraphElement, HTMLAttributes<HTMLHea
     <h3
       ref={ref}
       className={cn(
-        "text-2xl font-semibold leading-none tracking-tight",
+        "admin-text-2xl admin-font-semibold admin-leading-none admin-tracking-tight",
         className
       )}
       {...props}
@@ -118,7 +119,7 @@ CardTitle.displayName = "CardTitle";
 
 export const CardContent = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
+    <div ref={ref} className={cn("admin-p-6 admin-pt-0", className)} {...props} />
   )
 );
 CardContent.displayName = "CardContent";
@@ -131,21 +132,21 @@ interface BadgeProps extends HTMLAttributes<HTMLDivElement> {
 export const Badge = forwardRef<HTMLDivElement, BadgeProps>(
   ({ className, variant = 'primary', ...props }, ref) => {
     const variants = {
-      primary: 'border-transparent bg-blue-600 text-white hover:bg-blue-700',
-      secondary: 'border-transparent bg-gray-600 text-white hover:bg-gray-700',
-      success: 'border-transparent bg-green-600 text-white hover:bg-green-700',
-      danger: 'border-transparent bg-red-600 text-white hover:bg-red-700',
-      warning: 'border-transparent bg-yellow-500 text-white hover:bg-yellow-600',
-      info: 'border-transparent bg-cyan-600 text-white hover:bg-cyan-700',
-      outline: 'border-gray-300 bg-transparent text-gray-700 hover:bg-gray-50',
-      ghost: 'border-transparent bg-gray-100 text-gray-700 hover:bg-gray-200',
+      primary: 'admin-border-transparent admin-bg-primary admin-text-white',
+      secondary: 'admin-border-transparent admin-text-white',
+      success: 'admin-border-transparent admin-bg-green-600 admin-text-white',
+      danger: 'admin-border-transparent admin-bg-red-600 admin-text-white',
+      warning: 'admin-border-transparent admin-bg-yellow-600 admin-text-white',
+      info: 'admin-border-transparent admin-text-white',
+      outline: 'admin-border admin-bg-transparent',
+      ghost: 'admin-border-transparent admin-bg-gray-100',
     };
 
     return (
       <div
         ref={ref}
         className={cn(
-          'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+          'admin-inline-flex admin-items-center admin-rounded-full admin-border admin-px-25 admin-py-05 admin-text-xs admin-font-semibold admin-transition-colors admin-focus-visible:outline-none',
           variants[variant],
           className
         )}
@@ -158,24 +159,25 @@ Badge.displayName = "Badge";
 
 // ===== BUTTON =====
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'link' | 'primary' | 'secondary' | 'danger' | 'warning' | 'info' | 'primary-outline' | 'secondary-outline' | 'danger-outline' | 'warning-outline' | 'info-outline' | 'ghost';
+  variant?: 'link' | 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'primary-outline' | 'secondary-outline' | 'danger-outline' | 'warning-outline' | 'info-outline' | 'ghost';
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', disabled, ...props }, ref) => {
     const variants = {
-      primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
-      secondary: 'bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500',
-      danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
-      warning: 'bg-yellow-600 text-white hover:bg-yellow-700 focus:ring-yellow-500',
-      info: 'bg-cyan-600 text-white hover:bg-cyan-700 focus:ring-cyan-500',
-      link: 'text-blue-600 hover:text-blue-800 underline bg-transparent',
-      ghost: 'bg-transparent hover:bg-gray-100 focus:ring-gray-500',
-      'primary-outline': 'border border-blue-600 text-blue-600 hover:bg-blue-50 focus:ring-blue-500',
-      'secondary-outline': 'border border-gray-600 text-gray-600 hover:bg-gray-50 focus:ring-gray-500',
-      'danger-outline': 'border border-red-600 text-red-600 hover:bg-red-50 focus:ring-red-500',
-      'warning-outline': 'border border-yellow-600 text-yellow-600 hover:bg-yellow-50 focus:ring-yellow-500',
-      'info-outline': 'border border-cyan-600 text-cyan-600 hover:bg-cyan-50 focus:ring-cyan-500',
+      primary: 'btn-primary',
+      secondary: 'btn-secondary',
+      danger: 'btn-danger',
+      success: 'btn-success',
+      warning: 'btn-warning',
+      info: 'btn-info',
+      link: 'btn-link',
+      ghost: 'btn-ghost',
+      'primary-outline': 'admin-border admin-text-primary admin-hover:bg-gray-50',
+      'secondary-outline': 'admin-border admin-hover:bg-gray-50',
+      'danger-outline': 'admin-border admin-text-red-600 admin-hover:bg-red-50',
+      'warning-outline': 'admin-border admin-text-yellow-600 admin-hover:bg-yellow-50',
+      'info-outline': 'admin-border admin-hover:bg-gray-50',
     };
 
     return (
@@ -183,7 +185,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled}
         className={cn(
-          'inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed',
+          'admin-btn',
           variants[variant],
           className
         )}
@@ -201,7 +203,7 @@ export const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputE
       type={type}
       ref={ref}
       className={cn(
-        'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+        'admin-flex admin-h-10 admin-w-full admin-rounded-md admin-border admin-bg-background admin-px-3 admin-py-2 admin-text-sm admin-file:border-0 admin-file:bg-transparent admin-file:text-sm admin-file:font-medium admin-placeholder:text-muted-foreground admin-focus-visible:outline-none admin-disabled:cursor-not-allowed admin-disabled:opacity-50',
         className
       )}
       {...props}
@@ -226,16 +228,16 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
       aria-checked={checked}
       onClick={() => onCheckedChange(!checked)}
       className={cn(
-        'peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50',
-        checked ? 'bg-primary' : 'bg-input',
+        'admin-inline-flex admin-h-6 admin-w-11 admin-shrink-0 admin-cursor-pointer admin-items-center admin-rounded-full admin-border-2 admin-border-transparent admin-transition-colors admin-focus-visible:outline-none admin-disabled:cursor-not-allowed admin-disabled:opacity-50',
+        checked ? 'admin-bg-primary' : 'admin-bg-input',
         className
       )}
       {...props}
     >
       <span
         className={cn(
-          'pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform',
-          checked ? 'translate-x-5' : 'translate-x-0'
+          'admin-block admin-h-5 admin-w-5 admin-rounded-full admin-bg-background admin-shadow-lg admin-ring-0 admin-transition-transform',
+          checked ? 'admin-translate-x-5' : 'admin-translate-x-0'
         )}
       />
     </button>
@@ -249,7 +251,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaHTMLAttributes<H
     <textarea
       ref={ref}
       className={cn(
-        'flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+        'admin-flex admin-min-h-20 admin-w-full admin-rounded-md admin-border admin-bg-background admin-px-3 admin-py-2 admin-text-sm admin-placeholder:text-muted-foreground admin-focus-visible:outline-none admin-disabled:cursor-not-allowed admin-disabled:opacity-50',
         className
       )}
       {...props}
@@ -277,16 +279,16 @@ export const Checkbox = forwardRef<HTMLButtonElement, CheckboxProps>(
       aria-checked={checked}
       onClick={() => onCheckedChange && onCheckedChange(!checked)}
       className={cn(
-        'peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
-        checked ? 'bg-primary text-primary-foreground' : 'bg-background',
-        disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
+        'admin-h-4 admin-w-4 admin-shrink-0 admin-rounded-sm admin-border admin-focus-visible:outline-none admin-disabled:cursor-not-allowed admin-disabled:opacity-50',
+        checked ? 'admin-bg-primary admin-text-primary-foreground' : 'admin-bg-background',
+        disabled ? 'admin-opacity-50 admin-cursor-not-allowed' : 'admin-cursor-pointer',
         className
       )}
       {...props}
     >
       {checked && (
         <svg
-          className="h-4 w-4"
+          className="admin-h-4 admin-w-4"
           fill="currentColor"
           viewBox="0 0 20 20"
         >
@@ -355,10 +357,10 @@ export const SheetContent = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivEle
     if (!context?.open) return null;
 
     return (
-      <div className="fixed inset-0 z-50 flex">
+      <div className="admin-fixed admin-inset-0 admin-z-50 admin-flex">
         {/* Backdrop */}
         <div 
-          className="fixed inset-0 bg-black/50"
+          className="admin-fixed admin-inset-0 admin-bg-black-50"
           onClick={() => context.setOpen(false)}
         />
         
@@ -366,16 +368,16 @@ export const SheetContent = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivEle
         <div
           ref={ref}
           className={cn(
-            "fixed right-0 top-0 h-full w-full max-w-sm border-l bg-background shadow-lg animate-in slide-in-from-right",
+            "admin-fixed admin-right-0 admin-top-0 admin-h-full admin-w-full admin-max-w-sm admin-border-l admin-bg-background admin-shadow-lg admin-animate-in admin-slide-in-from-right",
             className
           )}
           {...props}
         >
           <button
             onClick={() => context.setOpen(false)}
-            className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            className="admin-absolute admin-right-4 admin-top-4 admin-rounded-sm admin-opacity-70 admin-transition-opacity admin-hover:opacity-100 admin-focus-visible:outline-none"
           >
-            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="admin-h-4 admin-w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -391,7 +393,7 @@ export const SheetHeader = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElem
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn("flex flex-col space-y-2 text-center sm:text-left p-6", className)}
+      className={cn("admin-flex admin-flex-col admin-space-y-2 admin-text-center admin-p-6", className)}
       {...props}
     />
   )
@@ -402,7 +404,7 @@ export const SheetTitle = forwardRef<HTMLHeadingElement, HTMLAttributes<HTMLHead
   ({ className, ...props }, ref) => (
     <h2
       ref={ref}
-      className={cn("text-lg font-semibold text-foreground", className)}
+      className={cn("admin-text-lg admin-font-semibold admin-text-foreground", className)}
       {...props}
     />
   )
@@ -413,7 +415,7 @@ export const SheetDescription = forwardRef<HTMLParagraphElement, HTMLAttributes<
   ({ className, ...props }, ref) => (
     <p
       ref={ref}
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn("admin-text-sm admin-text-muted-foreground", className)}
       {...props}
     />
   )
@@ -424,7 +426,7 @@ export const SheetFooter = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElem
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 p-6", className)}
+      className={cn("admin-flex admin-flex-col-reverse admin-justify-end admin-gap-2 admin-p-6", className)}
       {...props}
     />
   )
@@ -455,7 +457,7 @@ export const Collapsible = forwardRef<HTMLDivElement, CollapsibleProps>(
 
     return (
       <CollapsibleContext.Provider value={{ open: internalOpen, setOpen: handleOpenChange }}>
-        <div ref={ref} className={cn("", className)} {...props}>
+        <div ref={ref} className={cn("admin-block", className)} {...props}>
           {children}
         </div>
       </CollapsibleContext.Provider>
@@ -493,7 +495,7 @@ export const CollapsibleContent = forwardRef<HTMLDivElement, HTMLAttributes<HTML
     return (
       <div
         ref={ref}
-        className={cn("overflow-hidden", className)}
+        className={cn("admin-overflow-hidden", className)}
         {...props}
       >
         {children}
@@ -511,10 +513,10 @@ interface AlertProps extends HTMLAttributes<HTMLDivElement> {
 export const Alert = forwardRef<HTMLDivElement, AlertProps>(
   ({ className, variant = 'default', ...props }, ref) => {
     const variants = {
-      default: 'bg-background text-foreground border-border',
-      destructive: 'border-red-500/50 text-red-600 bg-red-50 [&>svg]:text-red-600',
-      warning: 'border-yellow-500/50 text-yellow-600 bg-yellow-50 [&>svg]:text-yellow-600',
-      success: 'border-green-500/50 text-green-600 bg-green-50 [&>svg]:text-green-600',
+      default: 'admin-bg-background admin-text-foreground admin-border',
+      destructive: 'admin-text-red-600 admin-bg-red-50',
+      warning: 'admin-text-yellow-600 admin-bg-yellow-50',
+      success: 'admin-text-green-600 admin-bg-green-50',
     };
 
     return (
@@ -522,7 +524,7 @@ export const Alert = forwardRef<HTMLDivElement, AlertProps>(
         ref={ref}
         role="alert"
         className={cn(
-          'relative w-full rounded-lg border p-4 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground [&>svg~*]:pl-7',
+          'admin-relative admin-w-full admin-rounded-lg admin-border admin-p-4',
           variants[variant],
           className
         )}
@@ -537,7 +539,7 @@ export const AlertTitle = forwardRef<HTMLParagraphElement, HTMLAttributes<HTMLHe
   ({ className, ...props }, ref) => (
     <h5
       ref={ref}
-      className={cn('mb-1 font-medium leading-none tracking-tight', className)}
+      className={cn('admin-mb-1 admin-font-medium admin-leading-none admin-tracking-tight', className)}
       {...props}
     />
   )
@@ -548,7 +550,7 @@ export const AlertDescription = forwardRef<HTMLParagraphElement, HTMLAttributes<
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn('text-sm [&_p]:leading-relaxed', className)}
+      className={cn('admin-text-sm', className)}
       {...props}
     />
   )
@@ -574,7 +576,7 @@ export const AlertTriangleIcon = ({ className }: { className?: string }) => (
 
 export const AlertCircleIcon = ({ className }: { className?: string }) => (
   <svg
-    className={cn('h-4 w-4', className)}
+    className={cn('admin-h-4 admin-w-4', className)}
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -587,7 +589,7 @@ export const AlertCircleIcon = ({ className }: { className?: string }) => (
 
 export const CheckCircleIcon = ({ className }: { className?: string }) => (
   <svg
-    className={cn('h-4 w-4', className)}
+    className={cn('admin-h-4 admin-w-4', className)}
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -603,7 +605,7 @@ export const CheckCircleIcon = ({ className }: { className?: string }) => (
 
 export const InfoIcon = ({ className }: { className?: string }) => (
   <svg
-    className={cn('h-4 w-4', className)}
+    className={cn('admin-h-4 admin-w-4', className)}
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -667,10 +669,10 @@ export const AlertDialogContent = forwardRef<HTMLDivElement, HTMLAttributes<HTML
     if (!context?.open) return null;
 
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="admin-fixed admin-inset-0 admin-z-50 admin-flex admin-items-center admin-justify-center">
         {/* Backdrop */}
         <div 
-          className="fixed inset-0 bg-black/50"
+          className="admin-fixed admin-inset-0 admin-bg-black-50"
           onClick={() => context.setOpen(false)}
         />
         
@@ -678,7 +680,7 @@ export const AlertDialogContent = forwardRef<HTMLDivElement, HTMLAttributes<HTML
         <div
           ref={ref}
           className={cn(
-            "relative z-50 grid w-full max-w-lg gap-4 border bg-background p-6 shadow-lg duration-200 animate-in fade-in-0 zoom-in-95 rounded-lg",
+            "admin-relative admin-z-50 admin-grid admin-w-full admin-max-w-lg admin-gap-4 admin-border admin-bg-background admin-p-6 admin-shadow-lg admin-animate-in admin-fade-in-0 admin-zoom-in-95 admin-rounded-lg",
             className
           )}
           {...props}
@@ -695,7 +697,7 @@ export const AlertDialogHeader = forwardRef<HTMLDivElement, HTMLAttributes<HTMLD
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn("flex flex-col space-y-2 text-center sm:text-left", className)}
+      className={cn("admin-flex admin-flex-col admin-space-y-2 admin-text-center", className)}
       {...props}
     />
   )
@@ -706,7 +708,7 @@ export const AlertDialogTitle = forwardRef<HTMLHeadingElement, HTMLAttributes<HT
   ({ className, ...props }, ref) => (
     <h2
       ref={ref}
-      className={cn("text-lg font-semibold", className)}
+      className={cn("admin-text-lg admin-font-semibold", className)}
       {...props}
     />
   )
@@ -728,7 +730,7 @@ export const AlertDialogFooter = forwardRef<HTMLDivElement, HTMLAttributes<HTMLD
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2", className)}
+      className={cn("admin-flex admin-flex-col-reverse admin-justify-end admin-gap-2", className)}
       {...props}
     />
   )
@@ -754,7 +756,7 @@ export const AlertDialogAction = forwardRef<HTMLButtonElement, AlertDialogAction
           }
         }}
         className={cn(
-          'inline-flex h-10 items-center justify-center rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+          'admin-inline-flex admin-h-10 admin-items-center admin-justify-center admin-rounded-md admin-bg-red-600 admin-px-4 admin-py-2 admin-text-sm admin-font-semibold admin-text-white admin-transition-colors admin-focus-visible:outline-none admin-disabled:cursor-not-allowed admin-disabled:opacity-50',
           className
         )}
         {...props}
@@ -780,7 +782,7 @@ export const AlertDialogCancel = forwardRef<HTMLButtonElement, AlertDialogCancel
           context?.setOpen(false);
         }}
         className={cn(
-          'inline-flex h-10 items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+          'admin-inline-flex admin-h-10 admin-items-center admin-justify-center admin-rounded-md admin-border admin-bg-background admin-px-4 admin-py-2 admin-text-sm admin-font-medium admin-transition-colors admin-hover:bg-accent admin-hover:text-accent-foreground admin-focus-visible:outline-none',
           className
         )}
         {...props}

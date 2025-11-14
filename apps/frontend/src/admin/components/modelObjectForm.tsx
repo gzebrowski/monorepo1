@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { PencilIcon, PlusIcon, X, ExternalLink } from './ui/icons';
+import { EditIcon as PencilIcon, PlusIcon, X, ExternalLink } from './ui/icons';
 import { v4 as uuidv4 } from 'uuid';
 import {
 	Table,
@@ -111,12 +111,12 @@ const LabelForField: React.FC<LabelForFieldProps> = ({
 			<label>
 				{labelMaps?.[field] || splitCamelCaseWords(field, true)}
 				{isFieldRequired(fieldDef) && (
-					<span className="text-red-500 pl-2">*</span>
+					<span className="admin-text-red-600 admin-pl-2">*</span>
 				)}
 			</label>
 			{fieldDef?.help_text && (
 				<div>
-					<em className="text-sm text-muted-foreground ml-2">
+					<em className="admin-text-sm admin-text-muted-foreground admin-ml-2">
 						{fieldDef.help_text}
 					</em>
 				</div>
@@ -451,21 +451,21 @@ const ControlForField: React.FC<ControlForFieldProps> = ({
 					</div>
 					{relationToLabelMap[field] && (
 						<div>
-							<em className="text-sm text-muted-foreground inline-block">
+							<em className="admin-text-sm admin-text-muted-foreground admin-inline-block">
 								{relationToLabelMap[field]}
 								<Button
 									variant="ghost"
-									className="ml-2 p-0"
+									className="admin-ml-2 admin-p-0"
 									onClick={() => {
 										clearAutocompleteField(field);
 									}}>
-									<X className="h-4 w-4" />
+									<X className="admin-h-4 admin-w-4" />
 								</Button>
 							</em>
-							<span className="text-sm text-muted-foreground inline-block ml-1">
+							<span className="admin-text-sm admin-text-muted-foreground admin-inline-block admin-ml-1">
 								<Button
 									variant="ghost"
-									className="ml-2 p-0"
+									className="admin-ml-2 admin-p-0"
 									onClick={async () => {
 										await redirectToRelObject(field);
 									}}>
@@ -491,7 +491,7 @@ const ErrorBox: React.FC<ErrorBoxProps> = ({ errorMap, field }) => {
 
 	return (
 		<div className="error-box">
-			<p className="error-message p-1 text-white bg-red-500 display-inline-block my-1">
+			<p className="error-message admin-p-1 admin-text-white admin-bg-red-600 admin-inline-block admin-my-1">
 				{errorMessage}
 			</p>
 		</div>

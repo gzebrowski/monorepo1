@@ -23,9 +23,9 @@ export const CalendarDays: React.FC<IconProps> = ({ className }) => (
 );
 
 // Pencil Icon
-export const PencilIcon: React.FC<IconProps> = ({ className }) => (
+export const EditIcon: React.FC<IconProps> = ({ className }) => (
   <svg
-    className={cn('h-4 w-4', className)}
+    className={cn('admin-h-4 admin-w-4', className)}
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -42,7 +42,7 @@ export const PencilIcon: React.FC<IconProps> = ({ className }) => (
 // Plus Icon
 export const PlusIcon: React.FC<IconProps> = ({ className }) => (
   <svg
-    className={cn('h-4 w-4', className)}
+    className={cn('admin-h-4 admin-w-4', className)}
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -59,7 +59,7 @@ export const PlusIcon: React.FC<IconProps> = ({ className }) => (
 // X (Close) Icon
 export const X: React.FC<IconProps> = ({ className }) => (
   <svg
-    className={cn('h-4 w-4', className)}
+    className={cn('admin-h-4 admin-w-4', className)}
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -127,7 +127,7 @@ export const AlertTriangle: React.FC<IconProps> = ({ className }) => (
 // Filter Icon
 export const FilterIcon: React.FC<IconProps> = ({ className }) => (
   <svg
-    className={cn('h-4 w-4', className)}
+    className={cn('admin-h-4 admin-w-4', className)}
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -207,9 +207,9 @@ export const CheckCircleIcon: React.FC<IconProps> = ({ className }) => (
 );
 
 // Info Icon (from simpleComponents)
-export const InfoIcon: React.FC<IconProps> = ({ className }) => (
+export const SaveIcon: React.FC<IconProps> = ({ className }) => (
   <svg
-    className={cn('h-4 w-4', className)}
+    className={cn('admin-h-4 admin-w-4', className)}
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"

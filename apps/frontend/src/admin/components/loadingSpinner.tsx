@@ -1,9 +1,9 @@
-import React from 'react';
+
 
 export function LoadingSpinner() {
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
-      <div className="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-16 w-16"></div>
+    <div className="admin-fixed admin-inset-0 admin-flex admin-items-center admin-justify-center admin-z-50" style={{ backgroundColor: 'rgba(31, 41, 55, 0.5)' }}>
+      <div className="loader admin-rounded-full admin-h-16 admin-w-16" style={{ border: '8px solid #e5e7eb', borderTop: '8px solid #3b82f6' }}></div>
     </div>
   );
 }
