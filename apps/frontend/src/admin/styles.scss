@@ -705,3 +705,155 @@ $admin-font-size-xl: 1.25rem;
     }
   }
 }
+
+// Toast Notification System
+// =========================
+.admin-toast-container {
+  max-width: 24rem;
+  z-index: 1000;
+}
+
+.admin-toast-item {
+  padding: $admin-spacing-md;
+  border-radius: $admin-border-radius;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  border: 1px solid;
+  animation: admin-toast-slide-in 0.3s ease-out;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+  }
+}
+
+// Toast variants
+.admin-toast-success {
+  background-color: #f0fdf4;
+  border-color: color.adjust($admin-success-color, $lightness: 30%);
+  color: #166534;
+  
+  &::before {
+    background-color: $admin-success-color;
+  }
+  
+  .admin-toast-icon {
+    color: $admin-success-color;
+  }
+  
+  .admin-toast-close:hover {
+    background-color: color.adjust($admin-success-color, $lightness: 20%);
+  }
+}
+
+.admin-toast-error {
+  background-color: #fef2f2;
+  border-color: color.adjust($admin-danger-color, $lightness: 30%);
+  color: #991b1b;
+  
+  &::before {
+    background-color: $admin-danger-color;
+  }
+  
+  .admin-toast-icon {
+    color: $admin-danger-color;
+  }
+  
+  .admin-toast-close:hover {
+    background-color: color.adjust($admin-danger-color, $lightness: 20%);
+  }
+}
+
+.admin-toast-warning {
+  background-color: #fffbeb;
+  border-color: color.adjust($admin-warning-color, $lightness: 30%);
+  color: #92400e;
+  
+  &::before {
+    background-color: $admin-warning-color;
+  }
+  
+  .admin-toast-icon {
+    color: $admin-warning-color;
+  }
+  
+  .admin-toast-close:hover {
+    background-color: color.adjust($admin-warning-color, $lightness: 20%);
+  }
+}
+
+.admin-toast-info {
+  background-color: #f0f9ff;
+  border-color: color.adjust($admin-info-color, $lightness: 30%);
+  color: #0c4a6e;
+  
+  &::before {
+    background-color: $admin-info-color;
+  }
+  
+  .admin-toast-icon {
+    color: $admin-info-color;
+  }
+  
+  .admin-toast-close:hover {
+    background-color: color.adjust($admin-info-color, $lightness: 20%);
+  }
+}
+
+// Toast animations
+@keyframes admin-toast-slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes admin-toast-slide-out {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+// Toast title and message styles
+.admin-toast-title {
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.admin-toast-message {
+  line-height: 1.5;
+}
+
+.admin-toast-close {
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: $admin-border-radius;
+  
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+  }
+}
+
+// Icon sizing
+.admin-w-5 { width: 1.25rem; }
+.admin-h-5 { height: 1.25rem; }
+
+// Additional utility classes for toasts
+.admin-flex-shrink-0 { flex-shrink: 0; }
+.admin-max-w-sm { max-width: 24rem; }

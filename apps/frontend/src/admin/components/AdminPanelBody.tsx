@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button, Input, Switch } from './ui/simpleComponents';
-import { useToast } from '@/components/ui';
+import { useToasts } from '../context/toasts';
 import { DateTime } from 'luxon';
 import {
 	splitCamelCaseWords,
@@ -41,7 +41,7 @@ const AdminPanelBody: React.FC = () => {
 	const navigate = useNavigate();
 	// Get route params
 	const { adminModel, modelId } = useParams();
-	const { toast } = useToast();
+	const { showSuccess } = useToasts();
 	const [currentModel, setCurrentModel] = useState('');
 	const [currentAction, setCurrentAction] = useState('');
 	const [selectedAll, setSelectedAll] = useState<CheckedState>(false);
@@ -264,10 +264,10 @@ const AdminPanelBody: React.FC = () => {
 			const selectedIds = Object.keys(selectedItemsMap).filter(
 				(key) => selectedItemsMap[key],
 			);
-			toast({
-				title: 'Action Successful',
-				description: `Action ${currentAction} performed successfully on ${selectedIds.length} items.`,
-			});
+			showSuccess(
+				`Action ${currentAction} performed successfully on ${selectedIds.length} items.`,
+				'Action Successful',
+			);
 			changeSelectedState(null, false);
 			
 			// Reload data
@@ -280,7 +280,7 @@ const AdminPanelBody: React.FC = () => {
 		} finally {
 			setIsPerformingAction(false);
 		}
-	}, [currentModel, currentAction, selectedAny, selectedAll, selectEverything, selectedItemsMap, apiService, toast, changeSelectedState, loadModelItems, isPerformingAction]);
+	}, [currentModel, currentAction, selectedAny, selectedAll, selectEverything, selectedItemsMap, apiService, changeSelectedState, loadModelItems, isPerformingAction]);
 	const performAction = useCallback(async () => {
 		const action: ActionType | undefined = modelItems?.actions.find(
 			(action) => action.key === currentAction,
