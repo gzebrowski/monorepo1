@@ -10,6 +10,12 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
+    "paths": {
+      "@simpleblog/shared": ["../../libs/shared"],
+      "@simpleblog/shared/*": ["../../libs/shared/*"],
+      "@prismaadmin/core/*": ["../../prisma-admin/packages/core/src/*"],
+      "@prismaadmin/nestjs/*": ["../../prisma-admin/packages/nestjs/src/*"]
+    },
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": false,

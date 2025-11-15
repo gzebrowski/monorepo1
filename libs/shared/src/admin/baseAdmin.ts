@@ -413,8 +413,8 @@ export class BaseAdminModel {
         }
         return result;
     }
-    protected getFiltersClause(filters: Record<string, any> = {}, definedSearchFields: string[] | undefined): Prisma.JsonObject {
-        const where: Prisma.JsonObject = {};
+    protected getFiltersClause(filters: Record<string, any> = {}, definedSearchFields: string[] | undefined): Record<string, any> {
+        const where: Record<string, any> = {};
         // let fieldDefinition = await this.getPrismaModelFieldsAndTypes();
         const fieldDefs = this.getFieldsFromDMMF();
         for (const key in filters) {
@@ -484,7 +484,7 @@ export class BaseAdminModel {
         }
         return result;
     }
-    protected async defaultOrderingClause(orderList?: string[]): Promise<Prisma.JsonObject | Prisma.JsonObject[] | undefined> {
+    protected async defaultOrderingClause(orderList?: string[]): Promise<Record<string, any> | Record<string, any>[] | undefined> {
         orderList = orderList || await this.getOrderingFields();
         if (!orderList || orderList.length === 0) {
             return undefined;
@@ -496,7 +496,7 @@ export class BaseAdminModel {
         });
         return orderResult.length === 1 ? orderResult[0] : orderResult;
     }
-    protected async getOrderingClause(filters: Record<string, any> = {}, fields: string[] = []): Promise<Prisma.JsonObject | Prisma.JsonObject[] | undefined> {
+    protected async getOrderingClause(filters: Record<string, any> = {}, fields: string[] = []): Promise<Record<string, any> | Record<string, any>[] | undefined> {
         const fieldNames = fields.map(fieldDef => {
             const { field } = parseFieldName(fieldDef);
             return field;
@@ -839,17 +839,17 @@ export class BaseAdminModel {
     async _validateData(data: Record<string, any>, id?: string) {
         const errors: ValidationErrorDetail[] = [];
         const model = this.getPrismaModel(false);
-        const dmmf = Prisma.dmmf;
+        const dmmf = (this.prismaClient as any)._baseDmmf || (this.prismaClient as any).dmmf;
         
-        const modelDef = dmmf.datamodel.models.find(m => m.name === model);
+        const modelDef = dmmf.datamodel.models.find((m: any) => m.name === model);
 
         const fieldDefinitions = modelDef?.fields || [];
-        const fieldDefMap = fieldDefinitions.reduce((acc, field) => {
+        const fieldDefMap = fieldDefinitions.reduce((acc: any, field: any) => {
             acc[field.name] = field;
             return acc;
         }, {} as Record<string, typeof fieldDefinitions[number]>);
         const allDataKeys = Object.keys(data);
-        const missingKeys = fieldDefinitions.filter(field => !allDataKeys.includes(field.name));
+        const missingKeys = fieldDefinitions.filter((field: any) => !allDataKeys.includes(field.name));
 
         await Promise.all(allDataKeys.map(async key => {
             // Perform per-field validation
@@ -1114,14 +1114,14 @@ export class BaseAdminModel {
 
     getFieldsFromDMMF(): DMMMFieldType[] {
         const model = this.getPrismaModel(false);
-        const dmmf = Prisma.dmmf;
+        const dmmf = (this.prismaClient as any)._baseDmmf || (this.prismaClient as any).dmmf;
         
-        const modelDef = dmmf.datamodel.models.find(m => m.name === model);
+        const modelDef = dmmf.datamodel.models.find((m: any) => m.name === model);
         
         if (!modelDef) {
             throw new Error(`Model ${model} not found in DMMF`);
         }
-        return modelDef.fields.map(field => {
+        return modelDef.fields.map((field: any) => {
             return {
                 name: field.name,
                 type: field.type,
@@ -1144,9 +1144,9 @@ export class BaseAdminModel {
     }
     async getOneToOneRelationsFromDMMF(): Promise<OneToOneRelationsResultType> {
         const model = this.getPrismaModel(false);
-        const dmmf = Prisma.dmmf;
+        const dmmf = (this.prismaClient as any)._baseDmmf || (this.prismaClient as any).dmmf;
         
-        const modelDef = dmmf.datamodel.models.find(m => m.name === model);
+        const modelDef = dmmf.datamodel.models.find((m: any) => m.name === model);
         
         if (!modelDef) {
             throw new Error(`Model ${model} not found in DMMF`);
@@ -1223,9 +1223,9 @@ export class BaseAdminModel {
 
     async getPrismaModelRelationsFromDMMF(): Promise<DMMFModelRelationsType> {
         const model = this.getPrismaModel(false);
-        const dmmf = Prisma.dmmf;
+        const dmmf = (this.prismaClient as any)._baseDmmf || (this.prismaClient as any).dmmf;
         
-        const modelDef = dmmf.datamodel.models.find(m => m.name === model);
+        const modelDef = dmmf.datamodel.models.find((m: any) => m.name === model);
         
         if (!modelDef) {
             throw new Error(`Model ${model} not found in DMMF`);
@@ -1353,65 +1353,65 @@ export class BaseAdminModel {
     }
 }
 
-export type GetPrismaModelFieldsAndTypes = Prisma.PromiseReturnType<
+export type GetPrismaModelFieldsAndTypes = Awaited<ReturnType<
     typeof BaseAdminModel.prototype.getPrismaModelFieldsAndTypes
->;
-export type GetTotalCountType = Prisma.PromiseReturnType<
+>>;
+export type GetTotalCountType = Awaited<ReturnType<
     typeof BaseAdminModel.prototype.getTotalCount
->;
-export type FilterItemsType = Prisma.PromiseReturnType<
+>>;
+export type FilterItemsType = Awaited<ReturnType<
     typeof BaseAdminModel.prototype.filterItems
->;
-export type FindByIdType = Prisma.PromiseReturnType<
+>>;
+export type FindByIdType = Awaited<ReturnType<
     typeof BaseAdminModel.prototype.findById
->;
-export type CreateType = Prisma.PromiseReturnType<
+>>;
+export type CreateType = Awaited<ReturnType<
     typeof BaseAdminModel.prototype.create
->;
-export type UpdateType = Prisma.PromiseReturnType<
+>>;
+export type UpdateType = Awaited<ReturnType<
     typeof BaseAdminModel.prototype.update
->;
-export type DeleteType = Prisma.PromiseReturnType<
+>>;
+export type DeleteType = Awaited<ReturnType<
     typeof BaseAdminModel.prototype.delete
->;
-export type CountType = Prisma.PromiseReturnType<
+>>;
+export type CountType = Awaited<ReturnType<
     typeof BaseAdminModel.prototype.count
->;
-export type ExistsType = Prisma.PromiseReturnType<
+>>;
+export type ExistsType = Awaited<ReturnType<
     typeof BaseAdminModel.prototype.exists
->;
-export type FindOneType = Prisma.PromiseReturnType<
+>>;
+export type FindOneType = Awaited<ReturnType<
     typeof BaseAdminModel.prototype.findOne
->;
-export type FindManyType = Prisma.PromiseReturnType<
+>>;
+export type FindManyType = Awaited<ReturnType<
     typeof BaseAdminModel.prototype.findMany
->;
-export type GetListDisplayFieldsType = Prisma.PromiseReturnType<
+>>;
+export type GetListDisplayFieldsType = Awaited<ReturnType<
     typeof BaseAdminModel.prototype.getListDisplayFields
->;
-export type GetListFilterFieldsType = Prisma.PromiseReturnType<
+>>;
+export type GetListFilterFieldsType = Awaited<ReturnType<
     typeof BaseAdminModel.prototype.getListFilterFields
->;
-export type GetSearchFieldsType = Prisma.PromiseReturnType<
+>>;
+export type GetSearchFieldsType = Awaited<ReturnType<
     typeof BaseAdminModel.prototype.getSearchFields
->;
-export type GetOrderingFieldsType = Prisma.PromiseReturnType<
+>>;
+export type GetOrderingFieldsType = Awaited<ReturnType<
     typeof BaseAdminModel.prototype.getOrderingFields
->;
-export type GetActionsType = Prisma.PromiseReturnType<
+>>;
+export type GetActionsType = Awaited<ReturnType<
     typeof BaseAdminModel.prototype.getActions
->;
+>>;
 export type GetOneToOneRelationsFromDMMF = OneToOneRelationsResultType;
 
 export type GetOneToOneRelationsFromDMMFElement = ArrayElement<GetOneToOneRelationsFromDMMF['relations']>;
 
 export type GetPrismaModelRelationsFromDMMF = DMMFModelRelationsType;
-export type GetRelationToLabelMapType = Prisma.PromiseReturnType<
+export type GetRelationToLabelMapType = Awaited<ReturnType<
     typeof BaseAdminModel.prototype.getRelationToLabelMap
->;
-export type GetInlineItemsType = Prisma.PromiseReturnType<
+>>;
+export type GetInlineItemsType = Awaited<ReturnType<
     typeof BaseAdminModel.prototype.getInlineItems
->;
+>>;
 
 export class TreeAdminBase extends BaseAdminModel {
     protected manager: TreeManager<any> | null = null;

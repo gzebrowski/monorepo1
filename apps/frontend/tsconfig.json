@@ -23,7 +23,10 @@
     /* Path mapping */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@simpleblog/shared": ["../../libs/shared"],
+      "@simpleblog/shared/*": ["../../libs/shared/*"],
+      "@prismaadmin/react/*": ["../../prisma-admin/packages/react/src/*"],
     }
   },
   "include": ["src"],

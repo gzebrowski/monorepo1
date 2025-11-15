@@ -113,7 +113,7 @@ export class AdminService {
             listFilterFields = await modelInstance.getListFilterFields() as GetListFilterFieldsType;
             const rebuiltListFilterFields = [] as GetListFilterFieldsType;
             if (listFilterFields.length) {
-                listFilterFields.forEach((field) => {
+                listFilterFields.forEach((field: string) => {
                     const parts = field.split('|');
                     const renamedField = relationsMap[parts[0]];
                     relFieldsToRetrieve.push(renamedField || parts[0]);
@@ -127,7 +127,7 @@ export class AdminService {
             }
             listFilterFields = rebuiltListFilterFields;
         }
-        await Promise.all(fieldsAndTypes.map(async field => {
+        await Promise.all(fieldsAndTypes.map(async (field: any) => {
             if (field.data_type === 'enum') {
                 filterTypes[field.column_name] = await modelInstance.getUserDefinedTypes(field.raw_type);
             } else if (withFilters) {
@@ -282,7 +282,7 @@ export class AdminService {
         const excludes = await modelInstance.getExcludeFields() || [];
         excludes.push(...((params?.['exclude'] as string | undefined) || '').split(',').map(field => field.trim()).filter(field => field !== ''));
         const onlyFields = (params?.['only']) ? ((params?.['only'] as string | undefined) || '').split(',').map(field => field.trim()).filter(field => field !== '') : undefined;
-        const filteredFieldAndTypes = fieldsAndTypes.filter(field => !excludes.includes(field.column_name)).filter(field => (!onlyFields || onlyFields.includes(field.column_name)));
+        const filteredFieldAndTypes = fieldsAndTypes.filter((field: any) => !excludes.includes(field.column_name)).filter((field: any) => (!onlyFields || onlyFields.includes(field.column_name)));
         const extraFields = await modelInstance.getExtraFields(req, item) as ExtraFieldDefinition[] | undefined;
         const { extraFieldAndTypes, extraFilterTypes } = this.extractFromExtraFields(extraFields);
         return {
@@ -323,7 +323,7 @@ export class AdminService {
         const onlyFields = modelInstance?.fields?.length ? modelInstance.fields : undefined;
         excludes.push(...((params?.['exclude'] as string | undefined) || '').split(',').map(field => field.trim()).filter(field => field !== ''));
         const filteredFieldAndTypes = modelInstance.updateFilteredFieldAndTypes(
-            fieldsAndTypes.filter(field => !excludes.includes(field.column_name)).filter(field => (!onlyFields || onlyFields.includes(field.column_name)))
+            fieldsAndTypes.filter((field: any) => !excludes.includes(field.column_name)).filter((field: any) => (!onlyFields || onlyFields.includes(field.column_name)))
         );
         
         const extraFields = await modelInstance.getExtraFields(req) as ExtraFieldDefinition[] | undefined;
@@ -462,37 +462,37 @@ export class AdminService {
         return result?.[pkFieldName];
     }
 }
-export type GetModelItemType = Prisma.PromiseReturnType<
+export type GetModelItemType = Awaited<ReturnType<
     typeof AdminService.prototype.getModelItem
->;
+>>;
 
-export type GetModelMetadataType = Prisma.PromiseReturnType<
+export type GetModelMetadataType = Awaited<ReturnType<
     typeof AdminService.prototype.getModelMetadata
->;
+>>;
 
-export type UpdateModelItemType = Prisma.PromiseReturnType<
+export type UpdateModelItemType = Awaited<ReturnType<
     typeof AdminService.prototype.updateModelItem
->;
+>>;
 
-export type CreateModelItemType = Prisma.PromiseReturnType<
+export type CreateModelItemType = Awaited<ReturnType<
     typeof AdminService.prototype.createModelItem
->;
-export type GetAutocompleteItemsType = Prisma.PromiseReturnType<
+>>;
+export type GetAutocompleteItemsType = Awaited<ReturnType<
     typeof AdminService.prototype.getAutocompleteItems
->;
+>>;
 
-export type SaveInlinesType = Prisma.PromiseReturnType<
+export type SaveInlinesType = Awaited<ReturnType<
     typeof AdminService.prototype.saveInlines
->;
-export type DeleteObjectType = Prisma.PromiseReturnType<
+>>;
+export type DeleteObjectType = Awaited<ReturnType<
     typeof AdminService.prototype.deleteObject
->;
-export type GetModelItemsType = Prisma.PromiseReturnType<
+>>;
+export type GetModelItemsType = Awaited<ReturnType<
     typeof AdminService.prototype.getModelItems
->;
-export type PerformActionType = Prisma.PromiseReturnType<
+>>;
+export type PerformActionType = Awaited<ReturnType<
     typeof AdminService.prototype.performAction
->;
+>>;
 export type GetModelsType = ReturnType<
     typeof AdminService.prototype.getModels
 >;
