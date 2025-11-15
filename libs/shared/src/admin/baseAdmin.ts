@@ -839,7 +839,7 @@ export class BaseAdminModel {
     async _validateData(data: Record<string, any>, id?: string) {
         const errors: ValidationErrorDetail[] = [];
         const model = this.getPrismaModel(false);
-        const dmmf = (this.prismaClient as any).dmmf || (this.prismaClient as any)._baseDmmf;
+        const dmmf = Prisma.dmmf;
         
         const modelDef = dmmf.datamodel.models.find((m: any) => m.name === model);
 
@@ -1114,7 +1114,8 @@ export class BaseAdminModel {
 
     getFieldsFromDMMF(): DMMMFieldType[] {
         const model = this.getPrismaModel(false);
-        const dmmf = (this.prismaClient as any).dmmf || (this.prismaClient as any)._baseDmmf;
+        // const dmmf = (this.prismaClient as any).dmmf || (this.prismaClient as any)._baseDmmf;
+        const dmmf = Prisma.dmmf;
         
         const modelDef = dmmf.datamodel.models.find((m: any) => m.name === model);
         
@@ -1144,8 +1145,7 @@ export class BaseAdminModel {
     }
     async getOneToOneRelationsFromDMMF(): Promise<OneToOneRelationsResultType> {
         const model = this.getPrismaModel(false);
-        const dmmf = (this.prismaClient as any)._baseDmmf || (this.prismaClient as any).dmmf;
-        
+        const dmmf = Prisma.dmmf;
         const modelDef = dmmf.datamodel.models.find((m: any) => m.name === model);
         
         if (!modelDef) {
@@ -1223,7 +1223,7 @@ export class BaseAdminModel {
 
     async getPrismaModelRelationsFromDMMF(): Promise<DMMFModelRelationsType> {
         const model = this.getPrismaModel(false);
-        const dmmf = (this.prismaClient as any)._baseDmmf || (this.prismaClient as any).dmmf;
+        const dmmf = Prisma.dmmf;
         
         const modelDef = dmmf.datamodel.models.find((m: any) => m.name === model);
         
