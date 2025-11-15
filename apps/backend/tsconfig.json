@@ -11,8 +11,13 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
-      "@simpleblog/shared": ["../../libs/shared"],
-      "@simpleblog/shared/*": ["../../libs/shared/*"],
+      "@simpleblog/shared": ["../../libs/shared/src"],
+      "@simpleblog/shared/admin": ["../../libs/shared/src/admin"],
+      "@simpleblog/shared/types": ["../../libs/shared/src/types"],
+      "@simpleblog/shared/validation": ["../../libs/shared/src/validation"],
+      "@simpleblog/shared/api": ["../../libs/shared/src/api"],
+      "@simpleblog/shared/utils": ["../../libs/shared/src/utils"],
+      "@simpleblog/shared/*": ["../../libs/shared/src/*"],
       "@prismaadmin/core/*": ["../../prisma-admin/packages/core/src/*"],
       "@prismaadmin/nestjs/*": ["../../prisma-admin/packages/nestjs/src/*"]
     },
