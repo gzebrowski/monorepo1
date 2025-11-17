@@ -1,5 +1,4 @@
-import { ActionType, BaseAdminModel, ValidationError } from '@prismaadmin/core/baseAdmin';
-import { validateEmail } from '@prismaadmin/core/adminUtils';
+import { ActionType, BaseAdminModel, ValidationError, validateEmail } from '@prisma-admin/core';
 
 export class UserAdmin extends BaseAdminModel {
     override prismaModel = 'User';

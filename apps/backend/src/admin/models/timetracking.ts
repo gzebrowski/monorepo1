@@ -1,4 +1,4 @@
-import { ActionType, BaseAdminModel, FieldDependencies } from '@prismaadmin/core/baseAdmin';
+import { ActionType, BaseAdminModel, FieldDependencies } from '@prisma-admin/core';
 
 
 export class TimeTrackingAdmin extends BaseAdminModel {

@@ -1,4 +1,4 @@
-import { ActionIdsType, ActionType, BaseAdminModel, FieldDefinition, InlineDefinition } from '@prismaadmin/core/baseAdmin';
+import { ActionIdsType, ActionType, BaseAdminModel, FieldDefinition, InlineDefinition } from '@prisma-admin/core';
 
 
 const inlines: InlineDefinition[] = [

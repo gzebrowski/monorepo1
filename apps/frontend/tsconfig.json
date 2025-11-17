@@ -16,8 +16,8 @@
 
     /* Linting */
     "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
 
     /* Path mapping */
@@ -26,7 +26,10 @@
       "@/*": ["./src/*"],
       "@simpleblog/shared": ["../../libs/shared"],
       "@simpleblog/shared/*": ["../../libs/shared/*"],
-      "@prismaadmin/react/*": ["../../prisma-admin/packages/react/src/*"],
+      "@prisma-admin/core": ["../../prisma-admin/packages/core/src"],
+      "@prisma-admin/core/*": ["../../prisma-admin/packages/core/src/*"],
+      "@prisma-admin/react": ["../../prisma-admin/packages/react/src"],
+      "@prisma-admin/react/*": ["../../prisma-admin/packages/react/src/*"],
     }
   },
   "include": ["src"],

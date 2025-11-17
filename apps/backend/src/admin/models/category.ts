@@ -1,4 +1,4 @@
-import { ActionType, BaseAdminModel, ValidationError } from '@prismaadmin/core/baseAdmin';
+import { ActionType, BaseAdminModel, ValidationError } from '@prisma-admin/core';
 
 
 export class CategoryAdmin extends BaseAdminModel {

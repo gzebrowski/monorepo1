@@ -1,6 +1,5 @@
-import { BaseAdminController } from '@prismaadmin/nestjs/admin.controller';
+import { BaseAdminController, PrismaService } from '@prisma-admin/nestjs';
 import { AdminService } from './admin.service';
-import { PrismaService } from '@prismaadmin/nestjs/prisma.service';
 
 
 export class AdminController extends BaseAdminController<AdminService> {

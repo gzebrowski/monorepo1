@@ -8,6 +8,8 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      "@prisma-admin/core": path.resolve(__dirname, "../../prisma-admin/packages/core/src"),
+      "@prisma-admin/react": path.resolve(__dirname, "../../prisma-admin/packages/react/src"),
     },
   },
   server: {

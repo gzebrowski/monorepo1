@@ -11,7 +11,7 @@ import { ProjectCategoryAdmin } from "./models/projectcategory";
 import { ProjectSubCategoryAdmin } from "./models/projectsubcategory";
 import { TimeTrackingAdmin } from "./models/timetracking";
 
-import { AdminDefinitionMap } from "@prismaadmin/core/baseAdmin";
+import { AdminDefinitionMap } from "@prisma-admin/core";
 import { VariousFieldsAdmin } from "./models/variousfields";
 
 const adminDefinitions: AdminDefinitionMap = {

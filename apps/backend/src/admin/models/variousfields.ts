@@ -1,4 +1,4 @@
-import { ActionType, BaseAdminModel } from '@prismaadmin/core/baseAdmin';
+import { ActionType, BaseAdminModel } from '@prisma-admin/core';
 
 
 export class VariousFieldsAdmin extends BaseAdminModel {
