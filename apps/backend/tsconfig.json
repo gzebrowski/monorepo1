@@ -12,7 +12,6 @@
     "baseUrl": "./",
     "paths": {
       "@simpleblog/shared": ["../../libs/shared/src"],
-      "@simpleblog/shared/admin": ["../../libs/shared/src/admin"],
       "@simpleblog/shared/types": ["../../libs/shared/src/types"],
       "@simpleblog/shared/validation": ["../../libs/shared/src/validation"],
       "@simpleblog/shared/api": ["../../libs/shared/src/api"],

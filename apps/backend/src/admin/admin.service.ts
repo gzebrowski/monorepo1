@@ -1,11 +1,11 @@
 import adminDefinitions from './adminlist';
-import { AdminDefinitionMap } from "@simpleblog/shared/admin";
+import { AdminDefinitionMap } from "@prismaadmin/core/baseAdmin";
 
-import { BaseAdminService } from "./nestjsapp/admin.service"
+import { BaseAdminService } from "@prismaadmin/nestjs/admin.service"
 
 class AdminService extends BaseAdminService {
     getAdminDefinitions(): AdminDefinitionMap {
-        return adminDefinitions;
+        return adminDefinitions as AdminDefinitionMap;
     }
 }
 

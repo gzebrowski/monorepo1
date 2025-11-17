@@ -36,4 +36,3 @@ export {
 export * from './config/env';
 
 // Export admin module
-export * from './admin';

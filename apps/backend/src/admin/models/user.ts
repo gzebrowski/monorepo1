@@ -1,5 +1,5 @@
-import { ActionType, BaseAdminModel, ValidationError, validateEmail } from '@simpleblog/shared/admin';
-
+import { ActionType, BaseAdminModel, ValidationError } from '@prismaadmin/core/baseAdmin';
+import { validateEmail } from '@prismaadmin/core/adminUtils';
 
 export class UserAdmin extends BaseAdminModel {
     override prismaModel = 'User';

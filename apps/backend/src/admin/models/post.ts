@@ -1,4 +1,4 @@
-import { ActionType, BaseAdminModel, ValidationError, validateEmail } from '@simpleblog/shared/admin';
+import { ActionType, BaseAdminModel, ValidationError } from '@prismaadmin/core/baseAdmin';
 
 
 export class PostAdmin extends BaseAdminModel {

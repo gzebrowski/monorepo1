@@ -1,4 +1,4 @@
-import { ActionType, BaseAdminModel, ValidationError, validateEmail, FieldDependencies } from '@simpleblog/shared/admin';
+import { ActionType, BaseAdminModel, FieldDependencies } from '@prismaadmin/core/baseAdmin';
 
 
 export class TimeTrackingAdmin extends BaseAdminModel {

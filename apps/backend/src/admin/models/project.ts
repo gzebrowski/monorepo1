@@ -1,4 +1,4 @@
-import { ActionIdsType, ActionType, BaseAdminModel, FieldDefinition, InlineDefinition, ValidationError, validateEmail } from '@simpleblog/shared/admin';
+import { ActionIdsType, ActionType, BaseAdminModel, FieldDefinition, InlineDefinition } from '@prismaadmin/core/baseAdmin';
 
 
 const inlines: InlineDefinition[] = [
