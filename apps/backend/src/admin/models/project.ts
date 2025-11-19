@@ -15,6 +15,7 @@ export class ProjectAdmin extends BaseAdminModel {
     override prismaModel = 'Project';
     protected override listDisplayFields: string[] = ['pk', 'name', 'isActive', 'startFrom', 'validTo', 'status'];
     static override prismaModelName = 'Project';
+    protected override listFilterFields: string[] = ['isActive', 'status'];
     protected override searchFields: string[] = ['#pk', 'name'];
     protected override inlines: InlineDefinition[] = inlines;
     protected override actions: ActionType[] = [
