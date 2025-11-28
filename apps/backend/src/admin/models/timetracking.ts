@@ -10,7 +10,6 @@ export class TimeTrackingAdmin extends BaseAdminModel {
         { key: 'deleteSelected', label: 'Delete Selected', requiresConfirmation: true, confirmationMessage: 'Are you sure you want to delete the selected projects?' },
     ];
     protected override fieldDependencies: FieldDependencies = {
-        'projectCategoryId': ['projectId'],
         'projectSubCategoryId': ['projectCategoryId'],
     };
 

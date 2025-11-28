@@ -28,6 +28,7 @@ model User {
   pollResponses PollResponse[]
   timeTrackings TimeTracking[]
   variousFields VariousFields[]
+  userItems     UserItems[]
 
   @@map("users")
 }
@@ -243,4 +244,18 @@ model VariousFieldItems {
   id             Int           @id @default(autoincrement())
   variousFieldId Int
   variousField   VariousFields @relation(fields: [variousFieldId], references: [id], onDelete: Cascade)
+}
+
+model UserItems {
+  id         Int       @id @default(autoincrement())
+  userId     Int
+  itemName   String
+  createdAt  DateTime  @default(now())
+  image      String?
+  customFile String?
+  activeTo   DateTime? @db.Date
+  // Relations
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_items")
 }

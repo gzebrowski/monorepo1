@@ -10,6 +10,7 @@ import { ProjectAdmin } from "./models/project";
 import { ProjectCategoryAdmin } from "./models/projectcategory";
 import { ProjectSubCategoryAdmin } from "./models/projectsubcategory";
 import { TimeTrackingAdmin } from "./models/timetracking";
+import { UserItemsAdmin } from "./models/useritems";
 
 import { AdminDefinitionMap } from "@prisma-admin/core";
 import { VariousFieldsAdmin } from "./models/variousfields";
@@ -28,6 +29,7 @@ const adminDefinitions: AdminDefinitionMap = {
   projectsubcategory: {cls: ProjectSubCategoryAdmin, name: ProjectSubCategoryAdmin.getPrismaModelPlural()},
   timetracking: {cls: TimeTrackingAdmin, name: TimeTrackingAdmin.getPrismaModelPlural()},
   variousfields: {cls: VariousFieldsAdmin, name: VariousFieldsAdmin.getPrismaModelPlural()},
+  useritems: {cls: UserItemsAdmin, name: UserItemsAdmin.getPrismaModelPlural()},
 };
 export default adminDefinitions;
 export {
@@ -44,4 +46,5 @@ export {
   ProjectSubCategoryAdmin,
   TimeTrackingAdmin,
   VariousFieldsAdmin,
+  UserItemsAdmin,
 };
