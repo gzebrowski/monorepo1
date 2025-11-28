@@ -3,12 +3,20 @@ import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { serverConfig, publicConfig } from '@simpleblog/shared';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   // Set global prefix for all routes
   app.setGlobalPrefix('api');
+
+  // Serve static files from uploads directory
+  const uploadDir = process.env.UPLOAD_DIR || 'uploads';
+  app.useStaticAssets(join(process.cwd(), uploadDir), {
+    prefix: '/uploads/',
+  });
 
   // Enable CORS using configuration from shared config
   app.enableCors({

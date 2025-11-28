@@ -140,6 +140,10 @@ apps/backend/.env
 apps/backend/uploads/
 apps/backend/logs/
 
+# Uploaded files (keep .gitkeep only)
+uploads/*
+!uploads/.gitkeep
+
 # Frontend specific (React/Vite)
 apps/frontend/dist/
 apps/frontend/build/
