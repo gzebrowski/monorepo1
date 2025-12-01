@@ -10,6 +10,7 @@ module.exports = function (options, webpack) {
         ...options.resolve?.alias,
         '@prisma-admin/core': path.resolve(__dirname, '../../prisma-admin/packages/core/dist'),
         '@prisma-admin/nestjs': path.resolve(__dirname, '../../prisma-admin/packages/nestjs/dist'),
+        '@prisma-admin/node-utils': path.resolve(__dirname, '../../prisma-admin/packages/node-utils/dist'),
       },
       plugins: [
         ...(options.resolve?.plugins || []),
@@ -20,6 +21,7 @@ module.exports = function (options, webpack) {
     },
     externals: {
       '@prisma/client': 'commonjs @prisma/client',
+      'sharp': 'commonjs sharp',
     },
   };
 };

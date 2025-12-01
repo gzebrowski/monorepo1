@@ -18,7 +18,9 @@
       "@simpleblog/shared/utils": ["../../libs/shared/src/utils"],
       "@simpleblog/shared/*": ["../../libs/shared/src/*"],
       "@prisma-admin/core": ["../../prisma-admin/packages/core/dist"],
-      "@prisma-admin/nestjs": ["../../prisma-admin/packages/nestjs/dist"]
+      "@prisma-admin/nestjs": ["../../prisma-admin/packages/nestjs/dist"],
+      "@prisma-admin/node-utils": ["../../prisma-admin/packages/node-utils/dist"],
+      "@prisma-admin/node-utils/*": ["../../prisma-admin/packages/node-utils/dist/*"]
     },
     "incremental": true,
     "skipLibCheck": true,

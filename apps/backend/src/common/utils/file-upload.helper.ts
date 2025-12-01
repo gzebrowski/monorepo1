@@ -26,14 +26,12 @@ export class FileUploadHelper {
   /**
    * Process and save file to disk
    * @param file File object from multipart form
-   * @param model Model name (e.g., 'users', 'posts')
-   * @param id Optional item ID for updates
+   * @param extraPath Optional extra path (e.g., model name like 'users', 'posts')
    * @returns File key (relative path)
    */
   async processFile(
     file: File | Express.Multer.File,
-    model: string,
-    id?: string | number | null,
+    extraPath?: string,
   ): Promise<string> {
     if (!file) {
       throw new Error('No file provided');
@@ -59,8 +57,8 @@ export class FileUploadHelper {
     const uniqueFileName = `${slugifiedName}-${timestamp}${ext}`;
 
     // Create model-specific directory path
-    const modelDir = path.join(this.uploadDir, model);
-    const fileKey = path.join(model, uniqueFileName);
+    const modelDir = path.join(this.uploadDir, extraPath || '');
+    const fileKey = path.join(extraPath || '', uniqueFileName);
     const fullPath = path.join(this.uploadDir, fileKey);
 
     // Ensure directory exists
@@ -82,8 +80,6 @@ export class FileUploadHelper {
    */
   getFileUrl(
     fileKey: string | null,
-    model: string,
-    idItem?: string | number | null,
   ): string | null {
     if (!fileKey) {
       return null;
